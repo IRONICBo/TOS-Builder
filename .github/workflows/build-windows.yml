@@ -1,0 +1,30 @@
+name: Build for Windows
+
+on:
+  pull_request:
+    paths-ignore:
+      - "*.md"
+  push:
+    paths-ignore:
+      - "*.md"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+      - name: Build
+        run: cargo build
+      - name: Run tests
+        run: cargo test --verbose --features github-actions
+      - name: Clippy
+        run: cargo clippy -- -Dwarnings
