@@ -15,6 +15,8 @@ A simple terminal build tool for [TencentOS-tiny](https://github.com/OpenAtomFou
 2. Like `menuconfig` but it has modern user interfaces with [ratatui](https://github.com/ratatui-org/ratatui).
 3. Easy to `config` and use `make` to build bin files.
 
+![Use TencentOS EVB board](assets/img/evb-board.jpg)
+
 ## 📺 System Preview
 
 <details open> 
