@@ -1,6 +1,18 @@
-use std::{fs::{DirEntry, self}, env::current_dir, error::Error, path::Path};
+use std::{
+    env::current_dir,
+    error::Error,
+    fs::{self, DirEntry},
+    path::Path,
+};
 
-use tui::{backend::Backend, Frame, layout::{Layout, Constraint, Rect, Alignment, Direction}, widgets::{Borders, Paragraph, Block, ListState, ListItem, BorderType, Wrap, List}, style::{Color, Style}, text::Text};
+use tui::{
+    backend::Backend,
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    style::{Color, Style},
+    text::Text,
+    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Wrap},
+    Frame,
+};
 
 use crate::app::App;
 
@@ -96,10 +108,7 @@ fn draw_file_item(entry: &DirEntry, vec: &mut Vec<ListItem>) {
 
 pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area: Rect) {
     let current_folder_list = &mut app.fl;
-    let fs_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(100)])
-        .split(area);
+    let fs_chunks = Layout::default().direction(Direction::Vertical).constraints([Constraint::Percentage(100)]).split(area);
 
     // let folder = Paragraph::new(Text::from(current_folder_list.current.as_str()))
     //     .wrap(Wrap { trim: true })
@@ -131,13 +140,8 @@ pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area
     //     }
     //     false => (),
     // }
-    let file_list = List::new(items)
-        .block(blk)
-        .highlight_style(Style::default().bg(Color::Cyan))
-        .highlight_symbol("> ");
+    let file_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::Cyan)).highlight_symbol("> ");
     frame.render_stateful_widget(file_list, fs_chunks[0], &mut current_folder_list.index);
 }
-
-
 
 // select project kind

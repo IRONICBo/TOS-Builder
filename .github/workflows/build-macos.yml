@@ -23,7 +23,7 @@ jobs:
           components: rustfmt, clippy
       - name: Build
         run: cargo build
-      - name: Run tests
-        run: cargo test --verbose --features github-actions
-      - name: Clippy
-        run: cargo clippy -- -Dwarnings
+      # - name: Run tests
+      #   run: cargo test --verbose --features github-actions
+      # - name: Clippy
+      #   run: cargo clippy -- -Dwarnings

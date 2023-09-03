@@ -41,7 +41,7 @@ impl Default for App {
             cube_mx_project_config: CubeMXProjectConfig {
                 path: "".to_string(),
                 kind: CubeMXProjectType::GCC,
-            },            
+            },
         }
     }
 }

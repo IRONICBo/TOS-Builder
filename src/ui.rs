@@ -2,14 +2,17 @@ use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
+    symbols::DOT,
     text::{Line, Span},
     widgets::{Block, BorderType, Borders, Padding, Paragraph, Tabs},
     Frame,
-    symbols::{DOT},
 };
 
-use crate::{app::App, components::{footer, header}};
 use crate::components::fs;
+use crate::{
+    app::App,
+    components::{footer, header},
+};
 
 /// Renders the user interface widgets.
 pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
@@ -43,9 +46,9 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
         .margin(1)
         .constraints(
             [
-                Constraint::Length(3), // header
+                Constraint::Length(3),      // header
                 Constraint::Percentage(90), // body
-                Constraint::Length(3), // footer
+                Constraint::Length(3),      // footer
             ]
             .as_ref(),
         )
@@ -58,19 +61,19 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     match app.routes.current {
         0 => {
             fs::draw_project_select_page(app, frame, chunks[1]);
-        },
+        }
         1 => {
             // draw_project_select_page(app, frame, chunks[1]);
-        },
+        }
         2 => {
             // draw_project_select_page(app, frame, chunks[1]);
-        },
+        }
         3 => {
             // draw_project_select_page(app, frame, chunks[1]);
-        },
+        }
         4 => {
             // draw_project_select_page(app, frame, chunks[1]);
-        },
+        }
         _ => unreachable!(),
     }
 

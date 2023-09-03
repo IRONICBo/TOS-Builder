@@ -1,4 +1,11 @@
-use tui::{Frame, backend::Backend, layout::Rect, style::{Color, Style, Modifier}, text::{Line, Span}, widgets::Paragraph};
+use tui::{
+    backend::Backend,
+    layout::Rect,
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
+    widgets::Paragraph,
+    Frame,
+};
 
 use crate::app::App;
 
@@ -21,5 +28,4 @@ pub fn draw_footer<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Re
     let paragraph = Paragraph::new(spans);
 
     frame.render_widget(paragraph, area);
-
 }
