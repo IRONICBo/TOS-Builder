@@ -1,0 +1,13 @@
+[package]
+name = "tosbuilder"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Asklv"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.14.0", features = ["full"] }
+crossterm = "0.26.1"
+tui = { package = "ratatui", version = "0.21.0" }
