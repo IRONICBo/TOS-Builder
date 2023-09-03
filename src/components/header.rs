@@ -19,7 +19,7 @@ pub fn draw_header<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Re
         .map(|t| Line::from(vec![Span::styled(t.clone(), Style::default().fg(Color::Blue))]))
         .collect();
     let tabs = Tabs::new(titles)
-        .block(Block::default().borders(Borders::ALL).title("Tencentos Tiny Build System."))
+        .block(Block::default().borders(Borders::ALL).title("Tencentos Tiny Build System"))
         .select(app.routes.current)
         .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::LightBlue))
         .divider(DOT);

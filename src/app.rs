@@ -1,6 +1,9 @@
-use std::error;
+use std::{env::current_dir, error};
 
-use crate::components::fs::FolderList;
+use crate::{
+    components::{fs::FolderList, kinds::KindList},
+    config::cubemx_config::{CubeMXProjectConfig, CubeMXProjectType},
+};
 
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -15,8 +18,13 @@ pub struct App {
 
     /// Routes
     pub routes: Routes,
+    /// Active modules
+    pub active_modules: ActiveModules,
+
     /// Filelist
     pub fl: FolderList,
+    /// CubeMX kind list
+    pub kl: KindList,
 
     /// TOS config
     pub cube_mx_project_config: CubeMXProjectConfig,
@@ -37,9 +45,16 @@ impl Default for App {
                 ],
                 0,
             ),
+            active_modules: ActiveModules::ProjectSelect(ProjectSelect::Fs),
             fl: FolderList::default().unwrap(),
+            kl: KindList::default(vec![
+                CubeMXProjectType::GCC.as_str().to_string(),
+                CubeMXProjectType::MDK.as_str().to_string(),
+                CubeMXProjectType::IAR.as_str().to_string(),
+            ])
+            .unwrap(),
             cube_mx_project_config: CubeMXProjectConfig {
-                path: "".to_string(),
+                path: current_dir().unwrap().to_str().unwrap().to_string(),
                 kind: CubeMXProjectType::GCC,
             },
         }
@@ -96,21 +111,40 @@ impl Routes {
 /// Selected modules
 #[derive(PartialEq, Debug)]
 pub enum ActiveModules {
+    ProjectSelect(ProjectSelect),
+    TosDownload(TosDownload),
+    TosConfig(TosConfig),
+    AtConfig(AtConfig),
+    MakeConfig(MakeConfig),
+}
+
+/// ProjectSelect page modules
+#[derive(PartialEq, Debug)]
+pub enum ProjectSelect {
     Fs,
+    Kind,
 }
 
-/// CubeMX project config.
-#[derive(Debug)]
-pub struct CubeMXProjectConfig {
-    /// Path to the CubeMX project.
-    pub path: String,
-    pub kind: CubeMXProjectType,
+#[derive(PartialEq, Debug)]
+pub enum TosDownload {
+    Fs,
+    Type,
 }
 
-/// CubeMX project type.
-#[derive(Debug)]
-pub enum CubeMXProjectType {
-    GCC,
-    KEIL,
-    IAR,
+#[derive(PartialEq, Debug)]
+pub enum TosConfig {
+    Fs,
+    Type,
+}
+
+#[derive(PartialEq, Debug)]
+pub enum AtConfig {
+    Fs,
+    Type,
+}
+
+#[derive(PartialEq, Debug)]
+pub enum MakeConfig {
+    Fs,
+    Type,
 }

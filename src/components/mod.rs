@@ -1,5 +1,6 @@
 pub mod download;
 pub mod fs;
+pub mod kinds;
 
 pub mod footer;
 pub mod header;

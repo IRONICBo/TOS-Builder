@@ -24,3 +24,6 @@ mod handlers;
 
 // Utils.
 mod utils;
+
+// TOS constant.
+mod config;

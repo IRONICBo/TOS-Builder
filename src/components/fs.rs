@@ -8,24 +8,13 @@ use std::{
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     text::Text,
     widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Frame,
 };
 
-use crate::app::App;
-
-pub fn draw_project_select_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
-    // const FOOTER_TEXT: &str = "Press `Esc`, `Ctrl-C` or `q` to stop running.";
-    // let footer = Paragraph::new(FOOTER_TEXT)
-    //     .block(Block::default().borders(Borders::ALL).title("Body"))
-    //     .style(Style::default().fg(Color::Magenta))
-    //     .alignment(Alignment::Center);
-    // frame.render_widget(footer, area);
-
-    draw_cube_path_tree(app, frame, area);
-}
+use crate::app::{ActiveModules, App};
 
 /// select project path
 #[derive(Debug)]
@@ -110,19 +99,7 @@ pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area
     let current_folder_list = &mut app.fl;
     let fs_chunks = Layout::default().direction(Direction::Vertical).constraints([Constraint::Percentage(100)]).split(area);
 
-    // let folder = Paragraph::new(Text::from(current_folder_list.current.as_str()))
-    //     .wrap(Wrap { trim: true })
-    //     .alignment(Alignment::Center)
-    //     .block(
-    //         Block::default()
-    //             .title("Choosed Project path")
-    //             .title_alignment(Alignment::Left)
-    //             .border_type(BorderType::Rounded)
-    //             .borders(Borders::ALL),
-    //     );
-    // frame.render_widget(folder, fs_chunks[0]);
-
-    let mut items = vec![ListItem::new("..")]; // to parent
+    let mut items: Vec<ListItem<'_>> = vec![ListItem::new("..")]; // to parent
     for entry in &current_folder_list.dirs {
         draw_dir_item(entry, &mut items);
     }
@@ -134,13 +111,17 @@ pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area
         .title_alignment(Alignment::Center)
         .borders(Borders::ALL)
         .border_type(BorderType::Rounded);
-    // match app.active_modules == ActiveModules::Fs {
-    //     true => {
-    //         blk = blk.border_style(Style::default().fg(Color::Cyan));
-    //     }
-    //     false => (),
-    // }
-    let file_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::Cyan)).highlight_symbol("> ");
+
+    match app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) {
+        true => {
+            blk = blk.border_style(Style::default().fg(Color::LightBlue).add_modifier(Modifier::BOLD));
+        }
+        false => {
+            blk = blk.border_style(Style::default().fg(Color::Black));
+        }
+    }
+
+    let file_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::LightYellow)).highlight_symbol("> ");
     frame.render_stateful_widget(file_list, fs_chunks[0], &mut current_folder_list.index);
 }
 

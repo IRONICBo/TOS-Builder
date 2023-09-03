@@ -22,7 +22,17 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
             app.routes.previous();
         }
         // Other handlers you could add here.
-        _ => {}
+        pages_event => {
+            match app.routes.current {
+                0 => {
+                    crate::handlers::project_select_handler::handle_key_events(pages_event, app)?;
+                }
+                1 => {
+                    // crate::pages::project_select::handle_key_events(pages_event, app)?;
+                }
+                _ => {}
+            }
+        }
     }
     Ok(())
 }
