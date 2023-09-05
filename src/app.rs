@@ -2,7 +2,7 @@ use std::{env::current_dir, error};
 
 use crate::{
     components::{fs::FolderList, kinds::KindList},
-    config::cubemx_config::{CubeMXProjectConfig, CubeMXProjectType},
+    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion}},
 };
 
 /// Application result type.
@@ -25,9 +25,13 @@ pub struct App {
     pub fl: FolderList,
     /// CubeMX kind list
     pub kl: KindList,
+    /// TOS kind list
+    pub tl: KindList,
 
-    /// TOS config
+    /// CubeMX project config
     pub cube_mx_project_config: CubeMXProjectConfig,
+    /// TOS project config
+    pub tos_project_config: TOSProjectConfig,
 }
 
 impl Default for App {
@@ -53,10 +57,14 @@ impl Default for App {
                 CubeMXProjectType::IAR.as_str().to_string(),
             ])
             .unwrap(),
-            cube_mx_project_config: CubeMXProjectConfig {
-                path: current_dir().unwrap().to_str().unwrap().to_string(),
-                kind: CubeMXProjectType::GCC,
-            },
+            tl: KindList::default(vec![
+                TOSProjectVersion::VERSION_2_5_0.as_str().to_string(),
+                TOSProjectVersion::VERSION_2_4_5.as_str().to_string(),
+                TOSProjectVersion::VERSION_2_1_0.as_str().to_string(),
+            ])
+            .unwrap(),
+            cube_mx_project_config: CubeMXProjectConfig::default(),
+            tos_project_config: TOSProjectConfig::default(),
         }
     }
 }
@@ -112,8 +120,8 @@ impl Routes {
 #[derive(PartialEq, Debug)]
 pub enum ActiveModules {
     ProjectSelect(ProjectSelect),
-    TosDownload(TosDownload),
-    TosConfig(TosConfig),
+    TOSDownload(TOSDownload),
+    TOSConfig(TOSConfig),
     AtConfig(AtConfig),
     MakeConfig(MakeConfig),
 }
@@ -126,13 +134,13 @@ pub enum ProjectSelect {
 }
 
 #[derive(PartialEq, Debug)]
-pub enum TosDownload {
+pub enum TOSDownload {
     Fs,
-    Type,
+    Version,
 }
 
 #[derive(PartialEq, Debug)]
-pub enum TosConfig {
+pub enum TOSConfig {
     Fs,
     Type,
 }

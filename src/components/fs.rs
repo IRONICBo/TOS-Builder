@@ -131,4 +131,39 @@ pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area
     frame.render_stateful_widget(file_list, fs_chunks[0], &mut current_folder_list.index);
 }
 
-// select project kind
+pub fn draw_tos_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area: Rect) {
+    let current_folder_list = &mut app.fl;
+    let fs_chunks = Layout::default().direction(Direction::Vertical).constraints([Constraint::Percentage(100)]).split(area);
+
+    let mut items: Vec<ListItem<'_>> = vec![];
+
+    // check if current path is root
+    // if !path::check_is_root(&current_folder_list.current) {
+        // items = vec![ListItem::new("..")]; // to parent
+    // }
+        
+    items = vec![ListItem::new("..")]; // to parent
+    for entry in &current_folder_list.dirs {
+        draw_dir_item(entry, &mut items);
+    }
+    for entry in &current_folder_list.files {
+        draw_file_item(entry, &mut items);
+    }
+    let mut blk = Block::default()
+        .title("File Explorer")
+        .title_alignment(Alignment::Center)
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded);
+
+    match app.active_modules == ActiveModules::TOSDownload(crate::app::TOSDownload::Fs) {
+        true => {
+            blk = blk.border_style(Style::default().fg(Color::LightBlue).add_modifier(Modifier::BOLD));
+        }
+        false => {
+            blk = blk.border_style(Style::default().fg(Color::Black));
+        }
+    }
+
+    let file_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::LightYellow)).highlight_symbol("> ");
+    frame.render_stateful_widget(file_list, fs_chunks[0], &mut current_folder_list.index);
+}

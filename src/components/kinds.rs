@@ -66,3 +66,29 @@ pub fn draw_cube_kind_tree<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, 
     let kind_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::LightYellow)).highlight_symbol("> ");
     frame.render_stateful_widget(kind_list, area, &mut current_kind_list.index);
 }
+
+pub fn draw_tos_version_tree<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
+    let current_kind_list = &mut app.tl;
+    let mut items: Vec<ListItem<'_>> = vec![];
+    for kind in current_kind_list.value.iter() {
+        draw_kind_item(kind, &mut items);
+    }
+
+    let mut blk = Block::default()
+        .title("Download TOS Project")
+        .title_alignment(Alignment::Center)
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded);
+
+    match app.active_modules == ActiveModules::TOSDownload(crate::app::TOSDownload::Version) {
+        true => {
+            blk = blk.border_style(Style::default().fg(Color::LightBlue).add_modifier(Modifier::BOLD));
+        }
+        false => {
+            blk = blk.border_style(Style::default().fg(Color::Black));
+        }
+    }
+
+    let kind_list = List::new(items).block(blk).highlight_style(Style::default().bg(Color::LightYellow)).highlight_symbol("> ");
+    frame.render_stateful_widget(kind_list, area, &mut current_kind_list.index);
+}

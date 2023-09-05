@@ -28,7 +28,7 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
                     crate::handlers::project_select_handler::handle_key_events(pages_event, app)?;
                 }
                 1 => {
-                    // crate::pages::project_select::handle_key_events(pages_event, app)?;
+                    crate::handlers::tos_download_hander::handle_key_events(pages_event, app)?;
                 }
                 _ => {}
             }

@@ -9,7 +9,7 @@ use tui::{
 };
 
 use crate::{
-    app::App,
+    app::{App, ActiveModules},
     components::{footer, header},
 };
 use crate::{
@@ -43,9 +43,25 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     match app.routes.current {
         0 => {
             project_select::draw_page(app, frame, chunks[1]);
+            match app.active_modules {
+                ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) | ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) => {
+                }
+                _ => {
+                    // set default active module
+                    app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+                }
+            }
         }
         1 => {
             tos_download::draw_page(app, frame, chunks[1]);
+            match app.active_modules {
+                ActiveModules::TOSDownload(crate::app::TOSDownload::Fs) | ActiveModules::TOSDownload(crate::app::TOSDownload::Version) => {
+                }
+                _ => {
+                    // set default active module
+                    app.active_modules = ActiveModules::TOSDownload(crate::app::TOSDownload::Fs);
+                }
+            }
         }
         2 => {
             tos_config::draw_page(app, frame, chunks[1]);

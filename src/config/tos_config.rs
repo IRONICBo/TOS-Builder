@@ -1,3 +1,48 @@
+use std::env::current_dir;
+
+#[derive(Debug)]
+pub struct TOSProjectConfig {
+    pub path: String,
+    pub version: TOSProjectVersion,
+}
+
+impl TOSProjectConfig {
+    pub fn default() -> Self {
+        Self {
+            path: current_dir().unwrap().to_str().unwrap().to_string(),
+            version: TOSProjectVersion::VERSION_2_5_0,
+        }
+    }
+}
+
+/// TOS project type.
+/// Reference: https://github.com/OpenAtomFoundation/TencentOS-tiny/tags
+#[derive(Debug, PartialEq)]
+pub enum TOSProjectVersion {
+    VERSION_2_5_0,
+    VERSION_2_4_5,
+    VERSION_2_1_0,
+}
+
+impl TOSProjectVersion {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            TOSProjectVersion::VERSION_2_5_0 => "v2.5.0",
+            TOSProjectVersion::VERSION_2_4_5 => "v2.4.5",
+            TOSProjectVersion::VERSION_2_1_0 => "v2.1.0",
+        }
+    }
+
+    pub fn convert_to_type(t: String) -> TOSProjectVersion {
+        match t.as_str() {
+            "v2.5.0" => TOSProjectVersion::VERSION_2_5_0,
+            "v2.4.5" => TOSProjectVersion::VERSION_2_4_5,
+            "v2.1.0" => TOSProjectVersion::VERSION_2_1_0,
+            _ => TOSProjectVersion::VERSION_2_5_0,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct TOSConfig {
     pub tos_cfg_task_prio_max: String,

@@ -36,8 +36,8 @@ pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect
 
 fn draw_config_table<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     let project_config_table = Table::new([
-        Row::new(["CubeMX Project Path", app.cube_mx_project_config.path.as_str(), "Choose a CubeMX Project directory"]),
-        Row::new(["Project Kind", app.cube_mx_project_config.kind.as_str(), "Choose your CubeMX Project Kind"]),
+        Row::new(["CubeMX Project Path", app.cube_mx_project_config.path.as_str(), "Choose a CubeMX project directory"]),
+        Row::new(["Project Kind", app.cube_mx_project_config.kind.as_str(), "Choose your CubeMX project kind"]),
     ])
     .header(Row::new(vec!["Config", "Value", "Description"]).style(Style::default().add_modifier(Modifier::BOLD)).bottom_margin(1))
     .block(Block::default().title("CubeMX Project Config").borders(Borders::ALL))
