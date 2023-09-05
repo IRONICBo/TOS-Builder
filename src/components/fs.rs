@@ -2,7 +2,7 @@ use std::{
     env::current_dir,
     error::Error,
     fs::{self, DirEntry},
-    path::Path,
+    path::{Path, Component},
 };
 
 use tui::{
@@ -14,7 +14,7 @@ use tui::{
     Frame,
 };
 
-use crate::app::{ActiveModules, App};
+use crate::{app::{ActiveModules, App}, utils::path};
 
 /// select project path
 #[derive(Debug)]
@@ -66,7 +66,6 @@ impl FolderList {
                             let path = entry.path();
                             if path.is_dir() {
                                 dir_entries.push(entry);
-                                break;
                             } else {
                                 file_entries.push(entry);
                             }
@@ -99,7 +98,14 @@ pub fn draw_cube_path_tree<B: Backend>(app: &mut App, frame: &mut Frame<B>, area
     let current_folder_list = &mut app.fl;
     let fs_chunks = Layout::default().direction(Direction::Vertical).constraints([Constraint::Percentage(100)]).split(area);
 
-    let mut items: Vec<ListItem<'_>> = vec![ListItem::new("..")]; // to parent
+    let mut items: Vec<ListItem<'_>> = vec![];
+
+    // check if current path is root
+    // if !path::check_is_root(&current_folder_list.current) {
+        // items = vec![ListItem::new("..")]; // to parent
+    // }
+        
+    items = vec![ListItem::new("..")]; // to parent
     for entry in &current_folder_list.dirs {
         draw_dir_item(entry, &mut items);
     }

@@ -33,4 +33,13 @@ impl CubeMXProjectType {
             CubeMXProjectType::IAR => "IAR",
         }
     }
+
+    pub fn convert_to_type(t: String) -> CubeMXProjectType {
+        match t.as_str() {
+            "GCC" => CubeMXProjectType::GCC,
+            "MDK" => CubeMXProjectType::MDK,
+            "IAR" => CubeMXProjectType::IAR,
+            _ => CubeMXProjectType::GCC,
+        }
+    }
 }
