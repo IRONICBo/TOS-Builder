@@ -2,7 +2,7 @@ use std::{env::current_dir, error};
 
 use crate::{
     components::{fs::FolderList, kinds::KindList, input::Input},
-    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}},
+    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
 };
 
 /// Application result type.
@@ -38,6 +38,8 @@ pub struct App {
     pub tos_project_config: TOSProjectConfig,
     /// TOS header config
     pub tos_header_table: TOSHeaderTable,
+    /// AT config
+    pub at_config_table: ATConfigTable
 }
 
 impl Default for App {
@@ -74,6 +76,7 @@ impl Default for App {
             cube_mx_project_config: CubeMXProjectConfig::default(),
             tos_project_config: TOSProjectConfig::default(),
             tos_header_table: TOSHeaderTable::default(),
+            at_config_table: ATConfigTable::default(),
         }
     }
 }

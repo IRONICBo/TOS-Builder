@@ -15,7 +15,7 @@ use tui::{
     Frame,
 };
 
-use crate::{app::{App, ActiveModules}, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree, config::tos_config::StringValue};
+use crate::{app::{App, ActiveModules}, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree, config::common::StringValue};
 
 pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     // split window

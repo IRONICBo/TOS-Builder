@@ -49,6 +49,9 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
                         2 => {
                             crate::handlers::tos_config_handler::handle_key_events(pages_event, app)?;
                         }
+                        3 => {
+                            crate::handlers::at_config_handler::handle_key_events(pages_event, app)?;
+                        }
                         _ => {}
                     }
                 }
