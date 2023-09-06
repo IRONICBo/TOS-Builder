@@ -21,23 +21,23 @@ A simple terminal build tool for [TencentOS-tiny](https://github.com/OpenAtomFou
 
 <details open> 
     <summary>Project Select</summary>
-    <img src="assets/img/main.png" />
+    <img src="assets/img/project_select.png" />
 </details>
 <details> 
     <summary>TOS Download</summary>
-    <img src="assets/img/main.png" />
+    <img src="assets/img/tos_download.png" />
 </details>
 <details> 
     <summary>TOS Config</summary>
-    <img src="assets/img/main.png" />
+    <img src="assets/img/tos_config.png" />
 </details>
 <details> 
     <summary>AT Config</summary>
-    <img src="assets/img/main.png" />
+    <img src="assets/img/at_config.png" />
 </details>
 <details> 
     <summary>Make Config</summary>
-    <img src="assets/img/main.png" />
+    <img src="assets/img/at_config.png" />
 </details>
 
 ## Get started 🚀
