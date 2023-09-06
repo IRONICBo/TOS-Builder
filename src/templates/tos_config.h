@@ -1,7 +1,7 @@
 #ifndef _TOS_CONFIG_H_
 #define  _TOS_CONFIG_H_
 
-#include "stm32l0xx.h"	// 目标芯片头文件，用户需要根据情况更改
+#include "{{TOS_CFG_HEADER_INCLUDE}}"	// 目标芯片头文件，用户需要根据情况更改
 
 #define TOS_CFG_TASK_PRIO_MAX           {{ TOS_CFG_TASK_PRIO_MAX }} 	// 配置TencentOS tiny默认支持的最大优先级数量
 

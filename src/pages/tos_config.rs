@@ -5,16 +5,17 @@ use std::{
     path::Path,
 };
 
+use serde_json::Value;
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Row, Table, Wrap},
+    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Row, Table, Wrap, Cell},
     Frame,
 };
 
-use crate::{app::App, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree};
+use crate::{app::{App, ActiveModules}, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree, config::tos_config::StringValue};
 
 pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     // split window
@@ -25,13 +26,38 @@ pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect
 }
 
 fn draw_config_table<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
-    let project_config_table = Table::new([
-        Row::new(["CubeMX Project Path", app.cube_mx_project_config.path.as_str()]),
-        Row::new(["Project Kind", app.cube_mx_project_config.kind.as_str()]),
-    ])
-    .header(Row::new(vec!["Config", "Value"]).style(Style::default().add_modifier(Modifier::BOLD)).bottom_margin(1))
-    .block(Block::default().title("CubeMX Project Config").borders(Borders::ALL))
+    // Unwarp json and get items
+    let binding = app.tos_header_table.tos_header_config.to_vec();
+    
+    let rows = binding.iter().map(|item| {
+        let height = item
+            .iter()
+            .map(|content| content.chars().filter(|c| *c == '\n').count())
+            .max()
+            .unwrap_or(0)
+            + 1;
+        let cells = item.iter().map(|c| Cell::from(c.as_str()));
+        Row::new(cells).height(height as u16).bottom_margin(1)
+    });
+
+    let mut blk = Block::default().title("TOS Project Header Config").borders(Borders::ALL).border_type(BorderType::Rounded).title_alignment(Alignment::Center);
+    
+    match app.active_modules == ActiveModules::TOSConfig(crate::app::TOSConfig::Config) {
+        true => {
+            blk = blk.border_style(Style::default().fg(Color::LightBlue).add_modifier(Modifier::BOLD));
+        }
+        false => {
+            blk = blk.border_style(Style::default().fg(Color::Black));
+        }
+    }
+
+    let project_config_table = Table::new(rows)
+    .header(Row::new(vec!["Config", "Value", "Description"]).style(Style::default().add_modifier(Modifier::BOLD)).bottom_margin(1))
+    .block(blk)
     .column_spacing(2)
-    .widths(&[Constraint::Min(20), Constraint::Percentage(100)]);
-    frame.render_widget(project_config_table, area);
+    .highlight_style(Style::default().bg(Color::LightYellow))
+    .highlight_symbol("> ")
+    .widths(&[Constraint::Min(45), Constraint::Percentage(15), Constraint::Percentage(85)]);
+
+    frame.render_stateful_widget(project_config_table, area, &mut app.tos_header_table.index);
 }

@@ -26,7 +26,7 @@ pub fn draw_footer<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Re
         Span::raw(" Enter dir "),
         Span::styled("<g|G>", Style::default().fg(key_color).add_modifier(Modifier::BOLD)),
         Span::raw(" Generate "),
-        Span::styled("<q|Q|Esc>", Style::default().fg(key_color).add_modifier(Modifier::BOLD)),
+        Span::styled("<q|Q>", Style::default().fg(key_color).add_modifier(Modifier::BOLD)),
         Span::raw(" Quit "),
     ]);
     let paragraph = Paragraph::new(spans);

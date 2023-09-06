@@ -1,8 +1,8 @@
 use std::{env::current_dir, error};
 
 use crate::{
-    components::{fs::FolderList, kinds::KindList},
-    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion}},
+    components::{fs::FolderList, kinds::KindList, input::Input},
+    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}},
 };
 
 /// Application result type.
@@ -20,6 +20,10 @@ pub struct App {
     pub routes: Routes,
     /// Active modules
     pub active_modules: ActiveModules,
+    /// Input popup
+    pub input_popup: bool,
+    /// Input
+    pub input: Input,
 
     /// Filelist
     pub fl: FolderList,
@@ -32,6 +36,8 @@ pub struct App {
     pub cube_mx_project_config: CubeMXProjectConfig,
     /// TOS project config
     pub tos_project_config: TOSProjectConfig,
+    /// TOS header config
+    pub tos_header_table: TOSHeaderTable,
 }
 
 impl Default for App {
@@ -50,6 +56,8 @@ impl Default for App {
                 0,
             ),
             active_modules: ActiveModules::ProjectSelect(ProjectSelect::Fs),
+            input_popup: false,
+            input: Input::default(),
             fl: FolderList::default().unwrap(),
             kl: KindList::default(vec![
                 CubeMXProjectType::GCC.as_str().to_string(),
@@ -65,6 +73,7 @@ impl Default for App {
             .unwrap(),
             cube_mx_project_config: CubeMXProjectConfig::default(),
             tos_project_config: TOSProjectConfig::default(),
+            tos_header_table: TOSHeaderTable::default(),
         }
     }
 }
@@ -141,18 +150,15 @@ pub enum TOSDownload {
 
 #[derive(PartialEq, Debug)]
 pub enum TOSConfig {
-    Fs,
-    Type,
+    Config
 }
 
 #[derive(PartialEq, Debug)]
 pub enum AtConfig {
-    Fs,
-    Type,
+    Config
 }
 
 #[derive(PartialEq, Debug)]
 pub enum MakeConfig {
-    Fs,
-    Type,
+    Config
 }

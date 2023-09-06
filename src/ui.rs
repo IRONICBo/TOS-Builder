@@ -10,7 +10,7 @@ use tui::{
 
 use crate::{
     app::{App, ActiveModules},
-    components::{footer, header},
+    components::{footer, header, popup},
 };
 use crate::{
     components::fs,
@@ -65,16 +65,45 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
         }
         2 => {
             tos_config::draw_page(app, frame, chunks[1]);
+            match app.active_modules {
+                ActiveModules::TOSConfig(crate::app::TOSConfig::Config) => {
+                }
+                _ => {
+                    // set default active module
+                    app.active_modules = ActiveModules::TOSConfig(crate::app::TOSConfig::Config);
+                }
+            }
         }
         3 => {
             at_config::draw_page(app, frame, chunks[1]);
+            match app.active_modules {
+                ActiveModules::AtConfig(crate::app::AtConfig::Config) => {
+                }
+                _ => {
+                    // set default active module
+                    app.active_modules = ActiveModules::AtConfig(crate::app::AtConfig::Config);
+                }
+            }
         }
         4 => {
             make_config::draw_page(app, frame, chunks[1]);
+            match app.active_modules {
+                ActiveModules::MakeConfig(crate::app::MakeConfig::Config) => {
+                }
+                _ => {
+                    // set default active module
+                    app.active_modules = ActiveModules::MakeConfig(crate::app::MakeConfig::Config);
+                }
+            }
         }
         _ => unreachable!(),
     }
 
     // Render footer.
     footer::draw_footer(app, frame, chunks[2]);
+
+    // Show popup
+    if app.input_popup {
+        popup::draw_input_popup(app, frame);
+    }
 }
