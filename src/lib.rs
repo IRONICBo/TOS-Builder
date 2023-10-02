@@ -23,7 +23,7 @@ mod pages;
 mod handlers;
 
 // Utils.
-mod utils;
+pub mod utils;
 
 // TOS constant.
 mod config;

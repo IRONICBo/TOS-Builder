@@ -1,8 +1,11 @@
 use crate::{app::{App, AppResult}, components::input::InputMode};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use log::*;
 
 /// Handles the key events and updates the state of [`App`].
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
+    debug!("Activate modules: {:?} Key event: {:?}", app.active_modules, key_event);
+    
     // Set input priority to the popup if it is active.
     match app.input.input_mode {
         InputMode::Editing => {

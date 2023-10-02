@@ -1,6 +1,7 @@
 use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component};
 
 use crossterm::event::KeyCode;
+use log::*;
 
 use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, components::input::InputMode};
 

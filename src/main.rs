@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+
 use std::io;
 use tosbuilder::app::{App, AppResult, Routes};
 use tosbuilder::event::{Event, EventHandler};
@@ -5,8 +8,12 @@ use tosbuilder::handler::handle_key_events;
 use tosbuilder::tui::Tui;
 use tui::backend::CrosstermBackend;
 use tui::Terminal;
+use tosbuilder::utils::logger;
 
 fn main() -> AppResult<()> {
+    logger::init_logger();
+    info!("[TOS Builder] Starting TOS Builder...");
+
     // Create an application.
     let mut app = App::new();
     // Set the application routes.

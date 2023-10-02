@@ -1,6 +1,7 @@
 use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component};
 
 use crossterm::event::KeyCode;
+use log::*;
 
 use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}};
 
@@ -139,6 +140,8 @@ fn choose_enter_item(app: &mut App) {
             }
         }
         ActiveModules::TOSDownload(crate::app::TOSDownload::Version) => {
+            // Start download and download to the config path
+            println!("Start download")
         }
         _ => {}
     }
