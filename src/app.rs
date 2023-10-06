@@ -1,7 +1,7 @@
 use std::{env::current_dir, error};
 
 use crate::{
-    components::{fs::FolderList, kinds::KindList, input::Input},
+    components::{fs::FolderList, kinds::KindList, input::Input, download::Download},
     config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
 };
 
@@ -24,6 +24,10 @@ pub struct App {
     pub input_popup: bool,
     /// Input
     pub input: Input,
+    /// Download popup
+    pub download_popup: bool,
+    /// Donwload
+    pub download: Download,
 
     /// Filelist
     pub fl: FolderList,
@@ -60,6 +64,8 @@ impl Default for App {
             active_modules: ActiveModules::ProjectSelect(ProjectSelect::Fs),
             input_popup: false,
             input: Input::default(),
+            download_popup: false,
+            download: Download::default(),
             fl: FolderList::default().unwrap(),
             kl: KindList::default(vec![
                 CubeMXProjectType::GCC.as_str().to_string(),

@@ -2,6 +2,7 @@
 extern crate log;
 
 use std::io;
+use std::sync::{Arc, Mutex};
 use tosbuilder::app::{App, AppResult, Routes};
 use tosbuilder::event::{Event, EventHandler};
 use tosbuilder::handler::handle_key_events;
@@ -42,7 +43,7 @@ fn main() -> AppResult<()> {
         // Handle events.
         match tui.events.next()? {
             Event::Tick => app.tick(),
-            Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
+            Event::Key(key_event) => handle_key_events(key_event, &mut app, &mut tui)?,
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
         }

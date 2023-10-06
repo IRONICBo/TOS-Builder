@@ -1,16 +1,17 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component};
+use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, thread, io::Stderr};
 
 use crossterm::event::KeyCode;
 use log::*;
+use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}};
+use crate::{app::{ActiveModules, App, AppResult}, utils::{path, downloader::{self, download_tos}}, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}, components::download, tui::Tui};
 
-pub fn handle_key_events(key_event: KeyCode, app: &mut App) -> AppResult<()> {
+pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
         KeyCode::Char('a') | KeyCode::Char('A') => choose_next_module(app),
         KeyCode::Char('d') | KeyCode::Char('D') => choose_previous_module(app),
         KeyCode::Char(' ') => choose_selected_item(app),
-        KeyCode::Enter => choose_enter_item(app),
+        KeyCode::Enter => choose_enter_item(app, tui),
         KeyCode::Up => choose_upper_item(app),
         KeyCode::Down => choose_down_item(app),
         _ => {}
@@ -102,7 +103,7 @@ fn choose_down_item(app: &mut App) {
     }
 }
 
-fn choose_enter_item(app: &mut App) {
+fn choose_enter_item(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) {
     match app.active_modules {
         ActiveModules::TOSDownload(crate::app::TOSDownload::Fs) => {
             let flist = &mut app.fl;
@@ -141,7 +142,10 @@ fn choose_enter_item(app: &mut App) {
         }
         ActiveModules::TOSDownload(crate::app::TOSDownload::Version) => {
             // Start download and download to the config path
-            println!("Start download")
+            info!("Current config path: {}", app.tos_project_config.path);
+            info!("Current config version: {}", app.tos_project_config.version.as_str());
+
+            let _ = download_tos(app, tui);
         }
         _ => {}
     }

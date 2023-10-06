@@ -106,4 +106,7 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     if app.input_popup {
         popup::draw_input_popup(app, frame);
     }
+    if app.download_popup {
+        popup::draw_download_popup(app, frame);
+    }
 }

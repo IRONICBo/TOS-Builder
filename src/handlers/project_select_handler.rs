@@ -1,11 +1,12 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component};
+use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, io::Stderr};
 
 use crossterm::event::KeyCode;
 use log::*;
+use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType};
+use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, tui::Tui};
 
-pub fn handle_key_events(key_event: KeyCode, app: &mut App) -> AppResult<()> {
+pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
         KeyCode::Char('a') | KeyCode::Char('A') => choose_next_module(app),
         KeyCode::Char('d') | KeyCode::Char('D') => choose_previous_module(app),
