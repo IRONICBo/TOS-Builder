@@ -7,6 +7,7 @@ use tui::widgets::{ListState, TableState};
 use super::common::{StringValue, BoolValue};
 
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct TOSProjectConfig {
     pub path: String,
     pub version: TOSProjectVersion,
@@ -24,6 +25,7 @@ impl TOSProjectConfig {
 /// TOS project type.
 /// Reference: https://github.com/OpenAtomFoundation/TencentOS-tiny/tags
 #[derive(Debug, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum TOSProjectVersion {
     VERSION_2_5_0,
     VERSION_2_4_5,
@@ -50,8 +52,10 @@ impl TOSProjectVersion {
 }
 
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct TOSHeaderTable {
     pub tos_header_config: TOSHeaderConfig,
+    #[serde(skip)]
     pub index: TableState,
     pub len: usize,
 }

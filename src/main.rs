@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate log;
+extern crate serde_derive;
 
 use std::io;
 use std::sync::{Arc, Mutex};
@@ -7,6 +8,7 @@ use tosbuilder::app::{App, AppResult, Routes};
 use tosbuilder::event::{Event, EventHandler};
 use tosbuilder::handler::handle_key_events;
 use tosbuilder::tui::Tui;
+use tosbuilder::utils::config::export_config;
 use tui::backend::CrosstermBackend;
 use tui::Terminal;
 use tosbuilder::utils::logger;
@@ -28,6 +30,9 @@ fn main() -> AppResult<()> {
         ],
         0,
     ));
+
+    // dump app config
+    let _ = export_config(&mut app, "config.json".to_string())?;
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stderr());

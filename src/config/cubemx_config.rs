@@ -1,7 +1,10 @@
 use std::env::current_dir;
 
+use serde::{Deserialize, Serialize};
+
 /// CubeMX project config.
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct CubeMXProjectConfig {
     /// Path to the CubeMX project.
     pub path: String,
@@ -19,6 +22,7 @@ impl CubeMXProjectConfig {
 
 /// CubeMX project type.
 #[derive(Debug, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum CubeMXProjectType {
     GCC,
     MDK,

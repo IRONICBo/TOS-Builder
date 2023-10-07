@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use tui::{
     backend::Backend,
     layout::{Rect, Layout, Direction, Constraint},
@@ -9,13 +10,16 @@ use tui::{
 
 use crate::app::App;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum InputMode {
+    #[default]
     Normal,
     Editing,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
+#[derive(Serialize, Deserialize)]
 pub struct Input {
     /// Current value of the input box
     pub input: String,

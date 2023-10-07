@@ -1,11 +1,14 @@
 use log::{info, debug};
+use serde::{Deserialize, Serialize};
 use tui::widgets::TableState;
 
 use super::common::BoolValue;
 
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct ATConfigTable {
     pub at_config: ATConfig,
+    #[serde(skip)]
     pub index: TableState,
     pub len: usize,
 }
@@ -26,6 +29,7 @@ impl ATConfigTable {
 }
 
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct ATConfig {
     pub enable_air724: BoolValue,
     pub enable_bc26: BoolValue,

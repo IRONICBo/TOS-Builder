@@ -5,6 +5,7 @@ use std::{
     path::Path,
 };
 
+use serde::{Deserialize, Serialize};
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
@@ -17,10 +18,12 @@ use tui::{
 use crate::app::{ActiveModules, App};
 
 /// select item value
-#[derive(Debug)]
+#[derive(Debug, Default)]
+#[derive(Serialize, Deserialize)]
 pub struct KindList {
     pub current: String,
     pub value: Vec<String>,
+    #[serde(skip)]
     pub index: ListState,
 }
 

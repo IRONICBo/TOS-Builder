@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use log::info;
+use serde::{Deserialize, Serialize};
 use tui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Rect, Alignment},
@@ -12,7 +13,8 @@ use tui::{
 
 use crate::app::App;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
+#[derive(Serialize, Deserialize)]
 pub struct Unzip {
     /// Current download value
     pub current: u64,

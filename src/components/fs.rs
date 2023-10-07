@@ -5,6 +5,7 @@ use std::{
     path::{Path, Component},
 };
 
+use serde::{Deserialize, Serialize};
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
@@ -17,11 +18,15 @@ use tui::{
 use crate::{app::{ActiveModules, App}, utils::path};
 
 /// select project path
-#[derive(Debug)]
+#[derive(Debug, Default)]
+#[derive(Serialize, Deserialize)]
 pub struct FolderList {
     pub current: String,
+    #[serde(skip)]
     pub dirs: Vec<DirEntry>,
+    #[serde(skip)]
     pub files: Vec<DirEntry>,
+    #[serde(skip)]
     pub index: ListState,
 }
 

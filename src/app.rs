@@ -1,5 +1,7 @@
 use std::{env::current_dir, error};
 
+use serde::{Serialize, Deserialize};
+
 use crate::{
     components::{fs::FolderList, kinds::KindList, input::Input, download::Download, unzip::Unzip},
     config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
@@ -9,44 +11,44 @@ use crate::{
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 /// Application.
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct App {
-    /// Is the application running?
+    // Is the application running?
     pub running: bool,
-    /// counter
+    // counter
     pub counter: u8,
 
-    /// Routes
+    // Routes
     pub routes: Routes,
-    /// Active modules
+    // Active modules
     pub active_modules: ActiveModules,
-    /// Input popup
+    // Input popup
     pub input_popup: bool,
-    /// Input
+    // Input
     pub input: Input,
-    /// Download popup
+    // Download popup
     pub download_popup: bool,
-    /// Donwload
+    // Donwload
     pub download: Download,
-    /// Unzip popup
+    // Unzip popup
     pub unzip_popup: bool,
-    /// Unzip
+    // Unzip
     pub unzip: Unzip,
 
-    /// Filelist
+    // Filelist
     pub fl: FolderList,
-    /// CubeMX kind list
+    // CubeMX kind list
     pub kl: KindList,
-    /// TOS kind list
+    // TOS kind list
     pub tl: KindList,
 
-    /// CubeMX project config
+    // CubeMX project config
     pub cube_mx_project_config: CubeMXProjectConfig,
-    /// TOS project config
+    // TOS project config
     pub tos_project_config: TOSProjectConfig,
-    /// TOS header config
+    // TOS header config
     pub tos_header_table: TOSHeaderTable,
-    /// AT config
+    // AT config
     pub at_config_table: ATConfigTable
 }
 
@@ -113,7 +115,8 @@ impl App {
 }
 
 /// Routes.
-#[derive(Debug)]
+#[derive(Default, Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Routes {
     /// Name of the route.
     pub name: Vec<String>,
@@ -142,6 +145,7 @@ impl Routes {
 
 /// Selected modules
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum ActiveModules {
     ProjectSelect(ProjectSelect),
     TOSDownload(TOSDownload),
@@ -152,28 +156,33 @@ pub enum ActiveModules {
 
 /// ProjectSelect page modules
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum ProjectSelect {
     Fs,
     Kind,
 }
 
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum TOSDownload {
     Fs,
     Version,
 }
 
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum TOSConfig {
     Config
 }
 
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum AtConfig {
     Config
 }
 
 #[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize)]
 pub enum MakeConfig {
     Config
 }
