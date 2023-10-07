@@ -109,4 +109,7 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     if app.download_popup {
         popup::draw_download_popup(app, frame);
     }
+    if app.unzip_popup {
+        popup::draw_unzip_popup(app, frame);
+    }
 }

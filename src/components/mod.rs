@@ -1,4 +1,5 @@
 pub mod download;
+pub mod unzip;
 pub mod fs;
 pub mod kinds;
 pub mod popup;

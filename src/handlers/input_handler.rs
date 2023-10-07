@@ -22,6 +22,7 @@ pub fn handle_key_events(key_event: KeyCode, app: &mut App) -> AppResult<()> {
         KeyCode::Esc => {
             app.input.input_mode = InputMode::Normal;
         }
+        KeyCode::Enter => choose_enter_item(app),
         _ => {}
     }
     Ok(())

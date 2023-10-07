@@ -68,6 +68,8 @@ fn choose_down_item(app: &mut App) {
 fn choose_enter_item(app: &mut App) {
     match app.active_modules {
         ActiveModules::TOSConfig(crate::app::TOSConfig::Config) => {
+            // open popup
+            app.input_popup = true;
         }
         _ => {}
     }

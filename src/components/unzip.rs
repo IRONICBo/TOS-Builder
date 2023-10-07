@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use log::info;
 use tui::{
     backend::Backend,
@@ -11,7 +13,7 @@ use tui::{
 use crate::app::App;
 
 #[derive(Debug)]
-pub struct Download {
+pub struct Unzip {
     /// Current download value
     pub current: u64,
     /// Total download value
@@ -22,7 +24,7 @@ pub struct Download {
     pub end_time: u64,
 }
 
-impl Download {
+impl Unzip {
     pub fn default() -> Self {
         Self {
             current: 0,
@@ -49,20 +51,19 @@ impl Download {
     }
 }
 
-pub fn get_download_block<'a>(app: &'a App) -> Gauge<'a> {
-    let label = format!("{}/{}", app.download.current, app.download.total);
+pub fn get_unzip_block<'a>(app: &'a App) -> Gauge<'a> {
+    let label = format!("{}/{}", app.unzip.current, app.unzip.total);
     let title = format!(
-        "Download TOS `{}` to `{}` (cost {}s)",
+        "Unzip TOS `{}` to `{}` (cost {}s)",
         app.tos_project_config.version.as_str(),
-        app.tos_project_config.path,
-        app.download.end_time - app.download.start_time
+        Path::new(app.tos_project_config.path.as_str()).join(app.tos_project_config.version.as_str()).as_path().to_str().unwrap(),
+        app.unzip.end_time - app.unzip.start_time
     );
 
     let gauge = Gauge::default()
         .block(Block::default().title(title.clone()).title_alignment(Alignment::Center).borders(Borders::ALL))
         .gauge_style(Style::default().fg(Color::Blue).bg(Color::White))
-        // .percent(10)
-        .percent(((app.download.current as f64 / app.download.total as f64) * 100.0) as u16)
+        .percent(((app.unzip.current as f64 / app.unzip.total as f64) * 100.0) as u16)
         .label(label);
 
     return gauge;

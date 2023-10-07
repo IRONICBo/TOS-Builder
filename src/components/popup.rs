@@ -9,7 +9,7 @@ use tui::{
 
 use crate::app::App;
 
-use super::{input::{self, InputMode}, download};
+use super::{input::{self, InputMode}, download, unzip};
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
@@ -67,6 +67,15 @@ pub fn draw_input_popup<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
 pub fn draw_download_popup<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     let size = frame.size();
     let block = download::get_download_block(app);
+    let area = centered_rect(60, 10, size);
+
+    frame.render_widget(Clear, area);
+    frame.render_widget(block, area);
+}
+
+pub fn draw_unzip_popup<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
+    let size = frame.size();
+    let block = unzip::get_unzip_block(app);
     let area = centered_rect(60, 10, size);
 
     frame.render_widget(Clear, area);

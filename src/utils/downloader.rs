@@ -48,11 +48,12 @@ pub async fn download_tos(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>
         app.download.set_current(downloaded as u64);
         app.download.set_end_time(Utc::now().timestamp() as u64);
 
-        debug!("downloaded {}/{} cost({} s), ", downloaded, len, app.download.end_time - app.download.start_time);
+        // debug!("downloaded {}/{} cost({} s), ", downloaded, len, app.download.end_time - app.download.start_time);
         tui.draw(app)?;
-
-        // break;
     }
+
+    // adust download size
+    app.download.set_total(downloaded as u64);
 
     info!("download to path {} ok", file_path_str);
     app.download_popup = false;

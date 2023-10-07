@@ -4,7 +4,7 @@ use crossterm::event::KeyCode;
 use log::*;
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::{path, downloader::{self, download_tos}}, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}, components::download, tui::Tui};
+use crate::{app::{ActiveModules, App, AppResult}, utils::{path, downloader::{self, download_tos}, extract_zip::extract_zip}, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}, components::download, tui::Tui};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
@@ -146,6 +146,8 @@ fn choose_enter_item(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) {
             info!("Current config version: {}", app.tos_project_config.version.as_str());
 
             let _ = download_tos(app, tui);
+
+            let _ = extract_zip(app, tui);
         }
         _ => {}
     }
