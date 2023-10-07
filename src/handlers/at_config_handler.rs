@@ -4,7 +4,7 @@ use crossterm::event::KeyCode;
 use log::*;
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, tui::Tui};
+use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, tui::Tui, components::input::InputMode};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
@@ -66,11 +66,21 @@ fn choose_down_item(app: &mut App) {
 }
 
 fn choose_enter_item(app: &mut App) {
-    match app.active_modules {
-        ActiveModules::AtConfig(crate::app::AtConfig::Config) => {
-        }
-        _ => {}
-    }
+    // open popup and set focus to input
+    app.input_popup = true;
+    app.input.input_mode = InputMode::Editing;
+
+    // set default value
+    let binding = app.at_config_table.at_config.to_vec();
+    let idx = app.at_config_table.index.selected().expect("at config table index is none");
+
+    let key = &binding[idx][0];
+    let value = &binding[idx][1];
+
+    app.input.input = value.to_string();
+    app.input.cursor_position = app.input.input.as_str().len() as usize;
+
+    // to input handler
 }
 
 fn choose_selected_item(app: &mut App) {

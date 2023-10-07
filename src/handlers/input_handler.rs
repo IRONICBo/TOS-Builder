@@ -3,7 +3,7 @@ use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component}
 use crossterm::event::KeyCode;
 use log::*;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, components::input::InputMode};
+use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::{cubemx_config::CubeMXProjectType, at_config}, components::input::InputMode};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App) -> AppResult<()> {
     match key_event {
@@ -113,46 +113,32 @@ fn choose_down_item(app: &mut App) {
 }
 
 fn choose_enter_item(app: &mut App) {
+    // Write to input
     match app.active_modules {
-        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) => {
-            let flist = &mut app.fl;
-            if let Some(selected) = flist.index.selected() {
-                if selected <= flist.dirs.len() {
-                    let dir = current_dir().unwrap();
-                    match selected {
-                        // .. to parent dir
-                        0 => match dir.parent() {
-                            Some(dir) => {
-                                set_current_dir(dir).unwrap();
-                                flist.current = dir.to_string_lossy().to_string();
-                                flist.index.select(Some(0));
-                            }
-                            None => {
-                                // Set to root path
-                                set_current_dir(Component::RootDir.as_os_str().to_str().unwrap()).unwrap();
-                                flist.current = dir.to_string_lossy().to_string();
-                                flist.index.select(Some(0));
-                            }
-                        },
-                        // to child dir
-                        num => {
-                            let dir_entry = &flist.dirs[num - 1];
-                            let path = dir_entry.path();
-                            flist.current = String::from(path.to_string_lossy());
-                            set_current_dir(path).unwrap();
-                            flist.index.select(Some(0));
-                        }
-                    }
-                    flist.refresh();
-                }
-            } else {
-                flist.index.select(Some(0));
-            }
-        }
-        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) => {
+        ActiveModules::AtConfig(crate::app::AtConfig::Config) => {
+            let binding = app.at_config_table.at_config.to_vec();
+            let idx = app.at_config_table.index.selected().expect("at config table index is none");
+            let key = binding[idx][0].clone();
+
+            // info!("Choose enter item: {:?}", key);
+            // update value
+            app.at_config_table.at_config.update(key, app.input.input.clone());
+        },
+        ActiveModules::TOSConfig(crate::app::TOSConfig::Config) => {
+            let binding = app.tos_header_table.tos_header_config.to_vec();
+            let idx = app.tos_header_table.index.selected().expect("tos header config table index is none");
+            let key = binding[idx][0].clone();
+
+            // info!("Choose enter item: {:?}", key);
+            // update value
+            app.tos_header_table.tos_header_config.update(key, app.input.input.clone());
         }
         _ => {}
     }
+
+    // close popup and unset focus to input
+    app.input_popup = false;
+    app.input.input_mode = InputMode::Normal;
 }
 
 fn choose_selected_item(app: &mut App) {

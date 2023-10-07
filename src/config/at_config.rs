@@ -1,3 +1,4 @@
+use log::{info, debug};
 use tui::widgets::TableState;
 
 use super::common::BoolValue;
@@ -71,5 +72,48 @@ impl ATConfig {
             self.enable_sim800a.to_vec(),
             self.enable_sim7600ce.to_vec(),
         ]
+    }
+
+    pub fn update(&mut self, key: String, value: String) {
+        match key.as_str() {
+            "ENABLE_AIR724" => {
+                self.enable_air724.value = value.parse::<bool>().unwrap();
+                info!("Air724 Value: {:?}", value.parse::<bool>().unwrap());
+                info!("Enable Air724: {:?}", self.enable_air724.value);
+            }
+            "ENABLE_BC26" => {
+                self.enable_bc26.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_BC25_28_95" => {
+                self.enable_bc25_28_95.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_BC35_28_95_LWM2M" => {
+                self.enable_bc35_28_95_lwm2m.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_EC20" => {
+                self.enable_ec20.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_ESP8266" => {
+                self.enable_esp8266.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_M26" => {
+                self.enable_m26.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_M5310A" => {
+                self.enable_m5310a.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_M6312" => {
+                self.enable_m6312.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_SIM800A" => {
+                self.enable_sim800a.value = value.parse::<bool>().unwrap();
+            }
+            "ENABLE_SIM7600CE" => {
+                self.enable_sim7600ce.value = value.parse::<bool>().unwrap();
+            }
+            _ => {
+                debug!("TOSHeaderConfig update key {} not found", key);
+            }
+        }
     }
 }

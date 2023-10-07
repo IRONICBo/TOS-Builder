@@ -1,5 +1,6 @@
 use std::env::current_dir;
 
+use log::debug;
 use serde::{Serialize, Deserialize};
 use tui::widgets::{ListState, TableState};
 
@@ -156,5 +157,88 @@ impl TOSHeaderConfig {
             self.tos_cfg_cpu_clock.to_vec(),
             self.tos_cfg_timer_as_proc.to_vec(),
         ]
+    }
+
+    pub fn update(&mut self, key: String, value: String) {
+        match key.as_str() {
+            "TOS_CFG_HEADER_INCLUDE" => {
+                self.tos_cfg_header_include.value = value;
+            }
+            "TOS_CFG_TASK_PRIO_MAX" => {
+                self.tos_cfg_task_prio_max.value = value;
+            }
+            "TOS_CFG_ROUND_ROBIN_EN" => {
+                self.tos_cfg_round_robin_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_OBJECT_VERIFY_EN" => {
+                self.tos_cfg_object_verify_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_TASK_DYNAMIC_CREATE_EN" => {
+                self.tos_cfg_task_dynamic_create_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_EVENT_EN" => {
+                self.tos_cfg_event_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MMBLK_EN" => {
+                self.tos_cfg_mmblk_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MMHEAP_EN" => {
+                self.tos_cfg_mmheap_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MMHEAP_DEFAULT_POOL_EN" => {
+                self.tos_cfg_mmheap_default_pool_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MMHEAP_DEFAULT_POOL_SIZE" => {
+                self.tos_cfg_mmheap_default_pool_size.value = value;
+            }
+            "TOS_CFG_MUTEX_EN" => {
+                self.tos_cfg_mutex_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MESSAGE_QUEUE_EN" => {
+                self.tos_cfg_message_queue_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_MAIL_QUEUE_EN" => {
+                self.tos_cfg_mail_queue_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_PRIORITY_MESSAGE_QUEUE_EN" => {
+                self.tos_cfg_priority_message_queue_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_PRIORITY_MAIL_QUEUE_EN" => {
+                self.tos_cfg_priority_mail_queue_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_TIMER_EN" => {
+                self.tos_cfg_timer_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_PWR_MGR_EN" => {
+                self.tos_cfg_pwr_mgr_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_TICKLESS_EN" => {
+                self.tos_cfg_tickless_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_SEM_EN" => {
+                self.tos_cfg_sem_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_TASK_STACK_DRAUGHT_DEPTH_DETACT_EN" => {
+                self.tos_cfg_task_stack_draught_depth_detact_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_FAULT_BACKTRACE_EN" => {
+                self.tos_cfg_fault_backtrace_en.value = value.parse::<bool>().unwrap();
+            }
+            "TOS_CFG_IDLE_TASK_STK_SIZE" => {
+                self.tos_cfg_idle_task_stk_size.value = value;
+            }
+            "TOS_CFG_CPU_TICK_PER_SECOND" => {
+                self.tos_cfg_cpu_tick_per_second.value = value;
+            }
+            "TOS_CFG_CPU_CLOCK" => {
+                self.tos_cfg_cpu_clock.value = value;
+            }
+            "TOS_CFG_TIMER_AS_PROC" => {
+                self.tos_cfg_timer_as_proc.value = value.parse::<bool>().unwrap();
+            }
+            _ => {
+                debug!("TOSHeaderConfig update key {} not found", key);
+            }
+        }
     }
 }
