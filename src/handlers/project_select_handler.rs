@@ -217,7 +217,8 @@ fn choose_selected_item(app: &mut App) {
                             let dir_entry = &flist.dirs[num - 1];
                             let path = dir_entry.path();
                             app.cube_mx_project_config.path = String::from(path.to_string_lossy());
-                            app.cube_mx_project_config.generated = String::from(path.join(Path::new("generated")).to_string_lossy());
+                            // fix: Update new generated path
+                            app.cube_mx_project_config.generated = String::from(path.parent().unwrap().join(Path::new("generated")).to_string_lossy());
                         }
                     }
                 }

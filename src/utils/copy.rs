@@ -13,7 +13,6 @@ pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), Box<dyn Error>> 
     }
 
     let name = src.file_name().unwrap().to_string_lossy();
-    println!("name {}", name);
 
     for entry in src.read_dir()? {
         let entry = entry?;

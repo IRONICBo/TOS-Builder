@@ -62,8 +62,8 @@ pub fn do_prepare_project(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>
 
     // copy board
     let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
+    info!("copy board ok... {} => {}", cubemx_project.to_string_lossy(), generated.join("board").join(project_name.clone()).as_path().to_string_lossy());
     let _ = copy_dir_recursive(cubemx_project, generated.join("board").join(project_name).as_path());
-    info!("copy board ok...");
 
     // copy kernel
     let _ = copy_dir_recursive(tos_dir.join("kernel").as_path(), generated.join("kernel").as_path());

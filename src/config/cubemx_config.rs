@@ -1,10 +1,12 @@
-use std::{env::current_dir, path::{self, Path}};
+use std::{
+    env::current_dir,
+    path::{self, Path},
+};
 
 use serde::{Deserialize, Serialize};
 
 /// CubeMX project config.
-#[derive(Debug)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CubeMXProjectConfig {
     /// Path to the CubeMX project.
     pub path: String,
@@ -17,8 +19,9 @@ impl CubeMXProjectConfig {
     pub fn default() -> Self {
         Self {
             path: current_dir().unwrap().to_str().unwrap().to_string(),
-            // Set generated path to current directory + generated
-            generated: current_dir().unwrap().join(Path::new("generated")).to_str().unwrap().to_string(),
+            // Set generated path to parent directory + generated
+            // fix: copy files recursively to the same directory
+            generated: current_dir().unwrap().parent().unwrap().join(Path::new("generated")).to_str().unwrap().to_string(),
             kind: CubeMXProjectType::GCC,
             arch: ArchType::CortexM4,
         }
@@ -26,8 +29,7 @@ impl CubeMXProjectConfig {
 }
 
 /// CubeMX project type.
-#[derive(Debug, PartialEq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum CubeMXProjectType {
     GCC,
     MDK,
@@ -54,8 +56,7 @@ impl CubeMXProjectType {
 }
 
 /// CubeMX arch type.
-#[derive(Debug, PartialEq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ArchType {
     Arcem,
     CortexM0,
