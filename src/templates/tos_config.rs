@@ -1,4 +1,4 @@
-#ifndef _TOS_CONFIG_H_
+pub const TOS_CONFIG: &str = r#"#ifndef _TOS_CONFIG_H_
 #define  _TOS_CONFIG_H_
 
 #include "{{TOS_CFG_HEADER_INCLUDE}}"	// 目标芯片头文件，用户需要根据情况更改
@@ -52,3 +52,28 @@
 #define TOS_CFG_TIMER_AS_PROC           {{ TOS_CFG_TIMER_AS_PROC }}		// 配置是否将TIMER配置成函数模式
 
 #endif
+"#;
+
+mod tests {
+    use std::fs::File;
+
+    use handlebars::Handlebars;
+
+    use crate::app::App;
+
+    use super::*;
+
+    #[test]
+    fn print_tos_header() {
+        println!("{}", TOS_CONFIG);
+
+        let mut reg = Handlebars::new();
+        let app = App::default();
+        let mut tos_header_file = File::create("tos_config.h").unwrap();
+
+        // write template to file
+        reg.register_template_string("tos_header", TOS_CONFIG);
+        reg.render_to_write("tos_header", &app.tos_header_table.tos_header_config.to_map(), &mut tos_header_file);
+    }
+    
+}

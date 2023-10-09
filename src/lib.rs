@@ -27,3 +27,6 @@ pub mod utils;
 
 // TOS constant.
 mod config;
+
+// Tos template.
+mod templates;

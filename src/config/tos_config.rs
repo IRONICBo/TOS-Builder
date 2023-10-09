@@ -2,6 +2,7 @@ use std::env::current_dir;
 
 use log::debug;
 use serde::{Serialize, Deserialize};
+use serde_json::value::{self, Map, Value as Json};
 use tui::widgets::{ListState, TableState};
 
 use super::common::{StringValue, BoolValue};
@@ -161,6 +162,37 @@ impl TOSHeaderConfig {
             self.tos_cfg_cpu_clock.to_vec(),
             self.tos_cfg_timer_as_proc.to_vec(),
         ]
+    }
+
+    pub fn to_map(&self) -> Map<String, Json> {
+        let mut data = Map::new();
+        data.insert(self.tos_cfg_header_include.key.clone(), value::to_value(&self.tos_cfg_header_include.value.clone()).unwrap());
+        data.insert(self.tos_cfg_task_prio_max.key.clone(), value::to_value(&self.tos_cfg_task_prio_max.value.clone()).unwrap());
+        data.insert(self.tos_cfg_round_robin_en.key.clone(), value::to_value(&self.tos_cfg_round_robin_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_object_verify_en.key.clone(), value::to_value(&self.tos_cfg_object_verify_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_task_dynamic_create_en.key.clone(), value::to_value(&self.tos_cfg_task_dynamic_create_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_event_en.key.clone(), value::to_value(&self.tos_cfg_event_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mmblk_en.key.clone(), value::to_value(&self.tos_cfg_mmblk_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mmheap_en.key.clone(), value::to_value(&self.tos_cfg_mmheap_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mmheap_default_pool_en.key.clone(), value::to_value(&self.tos_cfg_mmheap_default_pool_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mmheap_default_pool_size.key.clone(), value::to_value(&self.tos_cfg_mmheap_default_pool_size.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mutex_en.key.clone(), value::to_value(&self.tos_cfg_mutex_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_message_queue_en.key.clone(), value::to_value(&self.tos_cfg_message_queue_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_mail_queue_en.key.clone(), value::to_value(&self.tos_cfg_mail_queue_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_priority_message_queue_en.key.clone(), value::to_value(&self.tos_cfg_priority_message_queue_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_priority_mail_queue_en.key.clone(), value::to_value(&self.tos_cfg_priority_mail_queue_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_timer_en.key.clone(), value::to_value(&self.tos_cfg_timer_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_pwr_mgr_en.key.clone(), value::to_value(&self.tos_cfg_pwr_mgr_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_tickless_en.key.clone(), value::to_value(&self.tos_cfg_tickless_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_sem_en.key.clone(), value::to_value(&self.tos_cfg_sem_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_task_stack_draught_depth_detact_en.key.clone(), value::to_value(&self.tos_cfg_task_stack_draught_depth_detact_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_fault_backtrace_en.key.clone(), value::to_value(&self.tos_cfg_fault_backtrace_en.value.clone()).unwrap());
+        data.insert(self.tos_cfg_idle_task_stk_size.key.clone(), value::to_value(&self.tos_cfg_idle_task_stk_size.value.clone()).unwrap());
+        data.insert(self.tos_cfg_cpu_tick_per_second.key.clone(), value::to_value(&self.tos_cfg_cpu_tick_per_second.value.clone()).unwrap());
+        data.insert(self.tos_cfg_cpu_clock.key.clone(), value::to_value(&self.tos_cfg_cpu_clock.value.clone()).unwrap());
+        data.insert(self.tos_cfg_timer_as_proc.key.clone(), value::to_value(&self.tos_cfg_timer_as_proc.value.clone()).unwrap());
+
+        return data;
     }
 
     pub fn update(&mut self, key: String, value: String) {

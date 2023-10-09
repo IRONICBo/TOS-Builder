@@ -20,3 +20,5 @@ serde_derive = "1.0.188"
 
 log = "0.4.0"
 simplelog = "^0.12.0"
+askama = "0.12.1"
+handlebars = "4.4.0"
