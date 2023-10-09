@@ -1,15 +1,15 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, io::Stderr};
+use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::{Component, Path}, io::Stderr};
 
 use crossterm::event::KeyCode;
 use log::*;
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, tui::Tui};
+use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::{CubeMXProjectType, ArchType}, tui::Tui};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
-        KeyCode::Char('a') | KeyCode::Char('A') => choose_next_module(app),
-        KeyCode::Char('d') | KeyCode::Char('D') => choose_previous_module(app),
+        KeyCode::Char('a') | KeyCode::Char('A') => choose_previous_module(app),
+        KeyCode::Char('d') | KeyCode::Char('D') => choose_next_module(app),
         KeyCode::Char(' ') => choose_selected_item(app),
         KeyCode::Enter => choose_enter_item(app),
         KeyCode::Up => choose_upper_item(app),
@@ -21,20 +21,48 @@ pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<Crosst
 
 fn choose_next_module(app: &mut App) {
     // Change to next
-    if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) {
-        app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
-    } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) {
-        app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+    match app.active_modules {
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch);
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+        }
+        _ => {}
     }
+    // if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
+    // } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch);
+    // } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+    // }
 }
 
 fn choose_previous_module(app: &mut App) {
     // Change to next
-    if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) {
-        app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
-    } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) {
-        app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+    match app.active_modules {
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch);
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
+            app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
+        }
+        _ => {}
     }
+    // if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch);
+    // } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind);
+    // } else if app.active_modules == ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) {
+    //     app.active_modules = ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs);
+    // }
 }
 
 fn choose_upper_item(app: &mut App) {
@@ -64,6 +92,19 @@ fn choose_upper_item(app: &mut App) {
                 }
             } else {
                 klist.index.select(Some(0));
+            }
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
+            let alist = &mut app.arch;
+            let len = alist.value.len();
+            if let Some(selected) = alist.index.selected() {
+                if selected == 0 {
+                    alist.index.select(Some(len - 1));
+                } else {
+                    alist.index.select(Some(max(0, selected - 1)));
+                }
+            } else {
+                alist.index.select(Some(0));
             }
         }
         _ => {}
@@ -97,6 +138,19 @@ fn choose_down_item(app: &mut App) {
                 }
             } else {
                 klist.index.select(Some(0));
+            }
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
+            let alist = &mut app.arch;
+            let len = alist.value.len();
+            if let Some(selected) = alist.index.selected() {
+                if selected == len - 1 {
+                    alist.index.select(Some(0));
+                } else {
+                    alist.index.select(Some(min(len - 1, selected + 1)));
+                }
+            } else {
+                alist.index.select(Some(0));
             }
         }
         _ => {}
@@ -163,6 +217,7 @@ fn choose_selected_item(app: &mut App) {
                             let dir_entry = &flist.dirs[num - 1];
                             let path = dir_entry.path();
                             app.cube_mx_project_config.path = String::from(path.to_string_lossy());
+                            app.cube_mx_project_config.generated = String::from(path.join(Path::new("generated")).to_string_lossy());
                         }
                     }
                 }
@@ -173,6 +228,13 @@ fn choose_selected_item(app: &mut App) {
             if let Some(selected) = klist.index.selected() {
                 let kind = &klist.value[selected];
                 app.cube_mx_project_config.kind = CubeMXProjectType::convert_to_type(kind.to_string());
+            }
+        }
+        ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
+            let alist = &mut app.arch;
+            if let Some(selected) = alist.index.selected() {
+                let kind = &alist.value[selected];
+                app.cube_mx_project_config.arch = ArchType::convert_to_type(kind.to_string());
             }
         }
         _ => {}

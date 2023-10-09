@@ -1,10 +1,10 @@
-use std::{env::current_dir, error};
+use std::{env::current_dir, error, sync::Arc};
 
 use serde::{Serialize, Deserialize};
 
 use crate::{
-    components::{fs::FolderList, kinds::KindList, input::Input, download::Download, unzip::Unzip},
-    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
+    components::{fs::FolderList, kinds::KindList, input::Input, download::Download, unzip::Unzip, export::Export},
+    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType, ArchType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
 };
 
 /// Application result type.
@@ -34,11 +34,17 @@ pub struct App {
     pub unzip_popup: bool,
     // Unzip
     pub unzip: Unzip,
+    // Export popup
+    pub export_popup: bool,
+    // Export
+    pub export: Export,
 
     // Filelist
     pub fl: FolderList,
     // CubeMX kind list
     pub kl: KindList,
+    // CubeMX arch list
+    pub arch: KindList,
     // TOS kind list
     pub tl: KindList,
 
@@ -74,6 +80,8 @@ impl Default for App {
             download: Download::default(),
             unzip_popup: false,
             unzip: Unzip::default(),
+            export_popup: false,
+            export: Export::default(),
             fl: FolderList::default().unwrap(),
             kl: KindList::default(vec![
                 CubeMXProjectType::GCC.as_str().to_string(),
@@ -81,6 +89,25 @@ impl Default for App {
                 CubeMXProjectType::IAR.as_str().to_string(),
             ])
             .unwrap(),
+            arch: KindList::default(vec![
+                ArchType::Arcem.as_str().to_string(),
+                ArchType::CortexM0.as_str().to_string(),
+                ArchType::CortexA7.as_str().to_string(),
+                ArchType::CortexM0Plus.as_str().to_string(),
+                ArchType::CortexM3.as_str().to_string(),
+                ArchType::CortexM4.as_str().to_string(),
+                ArchType::CortexM7.as_str().to_string(),
+                ArchType::CortexM23.as_str().to_string(),
+                ArchType::CortexM33.as_str().to_string(),
+                ArchType::ATMega32.as_str().to_string(),
+                ArchType::Posix.as_str().to_string(),
+                ArchType::MSP430X.as_str().to_string(),
+                ArchType::Bumblebee.as_str().to_string(),
+                ArchType::RiscV3A.as_str().to_string(),
+                ArchType::Rv32i.as_str().to_string(),
+                ArchType::Spike.as_str().to_string(),
+                ArchType::Stm8.as_str().to_string(),
+            ]).unwrap(),
             tl: KindList::default(vec![
                 TOSProjectVersion::VERSION_2_5_0.as_str().to_string(),
                 TOSProjectVersion::VERSION_2_4_5.as_str().to_string(),
@@ -160,6 +187,7 @@ pub enum ActiveModules {
 pub enum ProjectSelect {
     Fs,
     Kind,
+    Arch,
 }
 
 #[derive(PartialEq, Debug)]

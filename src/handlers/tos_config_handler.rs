@@ -8,8 +8,8 @@ use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_co
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
-        KeyCode::Char('a') | KeyCode::Char('A') => choose_next_module(app),
-        KeyCode::Char('d') | KeyCode::Char('D') => choose_previous_module(app),
+        KeyCode::Char('a') | KeyCode::Char('A') => choose_previous_module(app),
+        KeyCode::Char('d') | KeyCode::Char('D') => choose_next_module(app),
         KeyCode::Char(' ') => choose_selected_item(app),
         KeyCode::Enter => choose_enter_item(app),
         KeyCode::Up => choose_upper_item(app),

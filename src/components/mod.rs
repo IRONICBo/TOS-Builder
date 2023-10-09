@@ -4,6 +4,7 @@ pub mod fs;
 pub mod kinds;
 pub mod popup;
 pub mod input;
+pub mod export;
 
 pub mod footer;
 pub mod header;

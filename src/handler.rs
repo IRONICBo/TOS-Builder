@@ -43,6 +43,9 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App, tui: &mut Tui<Cross
                 KeyCode::BackTab => {
                     app.routes.previous();
                 }
+                KeyCode::Char('g') | KeyCode::Char('G') => {
+                    crate::handlers::export_handler::handle_key_events(key_event.code, app, tui)?;
+                }
                 // Other handlers you could add here.
                 pages_event => {
                     match app.routes.current {

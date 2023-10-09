@@ -44,7 +44,7 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
         0 => {
             project_select::draw_page(app, frame, chunks[1]);
             match app.active_modules {
-                ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) | ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) => {
+                ActiveModules::ProjectSelect(crate::app::ProjectSelect::Fs) | ActiveModules::ProjectSelect(crate::app::ProjectSelect::Kind) | ActiveModules::ProjectSelect(crate::app::ProjectSelect::Arch) => {
                 }
                 _ => {
                     // set default active module
@@ -111,5 +111,8 @@ pub fn render<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>) {
     }
     if app.unzip_popup {
         popup::draw_unzip_popup(app, frame);
+    }
+    if app.export_popup {
+        popup::draw_export_popup(app, frame);
     }
 }

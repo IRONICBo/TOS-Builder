@@ -14,13 +14,13 @@ use tui::{
     Frame,
 };
 
-use crate::{app::App, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree};
+use crate::{app::App, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree, components::kinds::draw_cube_arch_tree};
 
 pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     // split window
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(6), Constraint::Percentage(100)])
+        .constraints([Constraint::Length(8), Constraint::Percentage(100)])
         .split(area);
 
     // Display values
@@ -28,16 +28,19 @@ pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect
 
     let select_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(15), Constraint::Percentage(15)])
         .split(chunks[1]);
     draw_cube_path_tree(app, frame, select_chunks[0]);
     draw_cube_kind_tree(app, frame, select_chunks[1]);
+    draw_cube_arch_tree(app, frame, select_chunks[2]);
 }
 
 fn draw_config_table<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     let project_config_table = Table::new([
         Row::new(["CubeMX Project Path", app.cube_mx_project_config.path.as_str(), "Choose a CubeMX project directory"]),
+        Row::new(["Export Project Path", app.cube_mx_project_config.generated.as_str(), "Choose generated project directory"]),
         Row::new(["Project Kind", app.cube_mx_project_config.kind.as_str(), "Choose your CubeMX project kind"]),
+        Row::new(["Arch Kind", app.cube_mx_project_config.arch.as_str(), "Choose your CubeMX arch kind"]),
     ])
     .header(Row::new(vec!["Config", "Value", "Description"]).style(Style::default().add_modifier(Modifier::BOLD)).bottom_margin(1))
     .block(Block::default().title("CubeMX Project Config").borders(Borders::ALL))
