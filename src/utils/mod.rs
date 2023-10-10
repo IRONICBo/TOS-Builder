@@ -5,3 +5,4 @@ pub mod extract_zip;
 pub mod config;
 pub mod export;
 pub mod copy;
+pub mod xml_helper;
