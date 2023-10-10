@@ -14,13 +14,13 @@ pub fn find_element_value<'a>(
         match event {
             Ok(XmlEvent::StartElement { name, .. }) => {
                 if target_index < target_path.len() && name.local_name == target_path[target_index] {
-                    println!("------ Level {} - target_path {} - name {}", target_index, target_path[target_index],  name.local_name );
+                    // println!("------ Level {} - target_path {} - name {}", target_index, target_path[target_index],  name.local_name );
                     target_index += 1;
                 }
             }
             Ok(XmlEvent::EndElement { name }) => {
                 if target_index > 0 && name.local_name == target_path[target_index - 1] {
-                    println!("------ Exit Level {} - target_path {} - name {}", target_index, target_path[target_index], name.local_name );
+                    // println!("------ Exit Level {} - target_path {} - name {}", target_index, target_path[target_index], name.local_name );
                     target_index -= 1;
                 }
             }
