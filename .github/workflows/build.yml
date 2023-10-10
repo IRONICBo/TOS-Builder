@@ -40,6 +40,9 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: true
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
     - run: rustup update stable --no-self-update && rustup default stable
     - run: |
         echo CARGO_BUILD_TARGET=${{ matrix.target }} >> $GITHUB_ENV
