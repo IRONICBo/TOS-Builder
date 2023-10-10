@@ -15,6 +15,7 @@ use crate::config::cubemx_config::CubeMXProjectType;
 use crate::templates;
 use crate::tui::Tui;
 use crate::utils::copy::copy_dir_recursive;
+use crate::utils::xml_helper::{find_element_value, update_element_value, temp_update_element_value};
 
 pub fn export_project(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     app.export_popup = true;
@@ -150,37 +151,39 @@ pub fn generate_mdk_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>
     let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
     let mdk_filepath = generated.join("board").join(project_name.clone()).join("MDK-ARM").join(format!("{}.uvprojx", project_name.clone()));
 
-    let file = File::open(mdk_filepath).expect("Failed to open file");
+    let file = File::open(mdk_filepath.clone()).expect("Failed to open file");
     let reader = BufReader::new(file);
 
-    let parser = EventReader::new(reader);
-    let mut depth = 0;
-
-    for e in parser {
-        match e {
-            Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                let vec = attributes.to_vec();
-                print!("{:?}", vec);
-                println!("{:spaces$}+{name}", "", spaces = depth * 2);
-                depth += 1;
-            }
-            Ok(XmlEvent::EndElement { name }) => {
-                depth -= 1;
-                println!("{:spaces$}-{name}", "", spaces = depth * 2);
-            }
-            Err(e) => {
-                eprintln!("Error: {e}");
-                break;
-            }
-            // There's more: https://docs.rs/xml-rs/latest/xml/reader/enum.XmlEvent.html
-            _ => {}
-        }
-    }
-
-    // Add header path
+    // 1. Add header path
     // Targets -> Target -> TargetOption -> TargetArmAds -> ArmAdsMisc -> Cads -> VariousControls -> IncludePath
+    let target_path: Vec<&str> = vec![
+        "Targets",
+        "Target",
+        "TargetOption",
+        "TargetArmAds",
+        "Cads",
+        "VariousControls",
+        "IncludePath",
+    ];
+    let include_path_value = find_element_value(reader, &target_path);
 
     // Add include path
+    let new_include_header_path_value = format!(
+        "{}{}",
+        include_path_value,
+        generate_include_header_path(app).as_str(),
+    );
+    temp_update_element_value(mdk_filepath.clone().to_str().unwrap(), mdk_filepath.clone().to_str().unwrap(), include_path_value.as_str(), new_include_header_path_value.as_str());
+
+    // 2. Add include path
+    // Replace </Groups> to xxx</Groups> to add include path
+    // </Groups> is unique
+    let new_include_file_path_value = format!(
+        "{}{}",
+        generate_include_files_path(app).as_str(),
+        "</Groups>",
+    );
+    temp_update_element_value(mdk_filepath.clone().to_str().unwrap(), mdk_filepath.clone().to_str().unwrap(), "</Groups>", new_include_file_path_value.as_str());
 
     Ok(())
 }
@@ -191,6 +194,214 @@ pub fn generate_iar_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>
 
     Ok(())
 }
+
+pub fn generate_include_header_path(app: &mut App) -> String {
+    info!("generate include path");
+
+    let mut include_path = String::new();
+
+    // ;..\..\..\arch\arm\arm-v7m\common\include;..\..\..\arch\arm\arm-v7m\cortex-m4\armcc;..\..\..\kernel\core\include;..\..\..\kernel\pm\include;..\..\..\osal\cmsis_os;..\TOS_CONFIG
+    // 1. Add arch common path
+    include_path.push_str(format!(r#";..\..\..\arch\{}\common\include"#, app.cube_mx_project_config.arch.get_top_arch()).as_str());
+    include_path.push_str(format!(r#";..\..\..\arch\{}\{}\{}"#, app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()).as_str());
+    include_path.push_str(format!(r#";..\..\..\kernel\core\include"#).as_str());
+    include_path.push_str(format!(r#";..\..\..\kernel\pm\include"#).as_str());
+    include_path.push_str(format!(r#";..\..\..\osal\cmsis_os"#).as_str());
+    include_path.push_str(format!(r#"..\TOS_CONFIG"#).as_str());
+
+    // TODO: Add at path
+
+    return include_path;
+}
+
+pub fn generate_include_files_path(app: &mut App) -> String {
+    info!("generate include path");
+
+    let mut include_path = String::new();
+
+    include_path.push_str(format!(r#"<Group>
+<GroupName>tos/arch</GroupName>
+<Files>
+  <File>
+    <FileName>tos_cpu.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\arch\{}\common\tos_cpu.c</FilePath>
+  </File>
+  <File>
+    <FileName>port_c.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\arch\{}\{}\{}\port_c.c</FilePath>
+  </File>
+  <File>
+    <FileName>port_s.S</FileName>
+    <FileType>2</FileType>
+    <FilePath>..\..\..\arch\{}\{}\{}\port_s.S</FilePath>
+  </File>
+</Files>
+</Group>"#, app.cube_mx_project_config.arch.get_top_arch(),
+    app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler(),
+    app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()
+    ).as_str());
+
+include_path.push_str(format!(r#"<Group>
+<GroupName>tos/kernel</GroupName>
+<Files>
+  <File>
+    <FileName>tos_barrier.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_barrier.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_binary_heap.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_binary_heap.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_bitmap.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_bitmap.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_char_fifo.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_char_fifo.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_completion.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_completion.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_countdownlatch.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_countdownlatch.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_event.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_event.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_global.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_global.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_mail_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_mail_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_message_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_message_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_mmblk.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_mmblk.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_mmheap.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_mmheap.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_mutex.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_mutex.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_pend.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_pend.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_priority_mail_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_priority_mail_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_priority_message_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_priority_message_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_priority_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_priority_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_ring_queue.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_ring_queue.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_robin.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_robin.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_rwlock.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_rwlock.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_sched.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_sched.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_sem.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_sem.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_stopwatch.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_stopwatch.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_sys.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_sys.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_task.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_task.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_tick.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_tick.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_time.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_time.c</FilePath>
+  </File>
+  <File>
+    <FileName>tos_timer.c</FileName>
+    <FileType>1</FileType>
+    <FilePath>..\..\..\kernel\core\tos_timer.c</FilePath>
+  </File>
+</Files>
+</Group>
+<Group>
+<GroupName>TOS-CONFIG</GroupName>
+<Files>
+  <File>
+    <FileName>tos_config.h</FileName>
+    <FileType>5</FileType>
+    <FilePath>..\TOS_CONFIG\tos_config.h</FilePath>
+  </File>
+</Files>
+</Group>"#).as_str());
+
+    return include_path;
+}
+
 
 mod tests {
     use std::{fs::File, io::BufReader, path::Path};
