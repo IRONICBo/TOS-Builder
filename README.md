@@ -75,14 +75,14 @@ git clone https://github.com/IRONICBo/TOS-Builder
 
 ##### 3. Build
 
-``bash
+```bash
 cd TOS-Builder
 cargo build --release
 ```
 
 ##### 4. Run
 
-``bash
+```bash
 cd target/release
 . /tosbuilder
 ```
