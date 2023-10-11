@@ -131,25 +131,46 @@ impl ArchType {
         }
     }
 
-    pub fn get_top_arch(&self) -> &'static str {
-        match self {
-            ArchType::Arcem => "arc",
-            ArchType::CortexM0 => "arm\\arm-v6m",
-            ArchType::CortexA7 => "arm\\arm-v7a",
-            ArchType::CortexM0Plus => "arm\\arm-v7m",
-            ArchType::CortexM3 => "arm\\arm-v7m",
-            ArchType::CortexM4 => "arm\\arm-v7m",
-            ArchType::CortexM7 => "arm\\arm-v7m",
-            ArchType::CortexM23 => "arm\\arm-v8m",
-            ArchType::CortexM33 => "arm\\arm-v8m",
-            ArchType::ATMega32 => "avr",
-            ArchType::Posix => "linux",
-            ArchType::MSP430X => "msp430",
-            ArchType::Bumblebee => "risc-v",
-            ArchType::RiscV3A => "risc-v",
-            ArchType::Rv32i => "risc-v",
-            ArchType::Spike => "risc-v",
-            ArchType::Stm8 => "stm8", // unsupported
+    pub fn get_top_arch(&self, compiler: String) -> &'static str {
+        match CubeMXProjectType::convert_to_type(compiler) {
+            CubeMXProjectType::GCC => match self {
+                ArchType::Arcem => "arc",
+                ArchType::CortexM0 => "arm/arm-v6m",
+                ArchType::CortexA7 => "arm/arm-v7a",
+                ArchType::CortexM0Plus => "arm/arm-v7m",
+                ArchType::CortexM3 => "arm/arm-v7m",
+                ArchType::CortexM4 => "arm/arm-v7m",
+                ArchType::CortexM7 => "arm/arm-v7m",
+                ArchType::CortexM23 => "arm/arm-v8m",
+                ArchType::CortexM33 => "arm/arm-v8m",
+                ArchType::ATMega32 => "avr",
+                ArchType::Posix => "linux",
+                ArchType::MSP430X => "msp430",
+                ArchType::Bumblebee => "risc-v",
+                ArchType::RiscV3A => "risc-v",
+                ArchType::Rv32i => "risc-v",
+                ArchType::Spike => "risc-v",
+                ArchType::Stm8 => "stm8", // unsupported
+            }
+            _ => match self {
+                ArchType::Arcem => "arc",
+                ArchType::CortexM0 => "arm\\arm-v6m",
+                ArchType::CortexA7 => "arm\\arm-v7a",
+                ArchType::CortexM0Plus => "arm\\arm-v7m",
+                ArchType::CortexM3 => "arm\\arm-v7m",
+                ArchType::CortexM4 => "arm\\arm-v7m",
+                ArchType::CortexM7 => "arm\\arm-v7m",
+                ArchType::CortexM23 => "arm\\arm-v8m",
+                ArchType::CortexM33 => "arm\\arm-v8m",
+                ArchType::ATMega32 => "avr",
+                ArchType::Posix => "linux",
+                ArchType::MSP430X => "msp430",
+                ArchType::Bumblebee => "risc-v",
+                ArchType::RiscV3A => "risc-v",
+                ArchType::Rv32i => "risc-v",
+                ArchType::Spike => "risc-v",
+                ArchType::Stm8 => "stm8", // unsupported
+            }
         }
     }
 }

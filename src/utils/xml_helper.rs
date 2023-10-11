@@ -127,13 +127,13 @@ fn alternating_caps(text: &str) -> String {
 }
 
 mod tests {
-    
+    use std::{path::Path, fs::{File, read_to_string, self}, io::{BufReader, BufWriter}};
 
-    
-    
+    use regex::Regex;
 
-    
+    use crate::utils::xml_helper::find_element_value;
 
+    use super::update_element_value;
     
     #[test]
     fn test_get_include_path() {

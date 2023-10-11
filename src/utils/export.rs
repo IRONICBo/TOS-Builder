@@ -1,6 +1,7 @@
 use chrono::{Local, TimeZone};
 use handlebars::Handlebars;
 use log::*;
+use regex::Regex;
 use std::fs;
 use std::io::{BufReader, Stderr};
 use std::path::{Path};
@@ -144,8 +145,67 @@ pub fn generate_gcc_kernel(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr
     let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
     let makefile_path = generated.join("board").join(project_name.clone()).join("Makefile");
 
-    let file = File::open(makefile_path.clone()).expect("Failed to open file");
-    let _reader = BufReader::new(file);
+    let mut content = fs::read_to_string(makefile_path.clone()).expect("Failed to read file");
+    
+    // add TOP_DIR
+    let pattern = Regex::new(format!("TARGET = {}", project_name.clone()).as_str()).expect("Failed to create regex");
+    content = pattern.replace(&content, format!(r#"TARGET = {}
+
+TOP_DIR = ../../"#, project_name.clone())).to_string();
+
+    // add files path
+    let pattern = Regex::new(format!("# ASM sources").as_str()).expect("Failed to create regex");
+    content = pattern.replace(&content, format!(r#"ARCH_SRC = \
+$${{wildcard $(TOP_DIR)/arch/{}/{}/{}/*.c}} \
+$${{wildcard $(TOP_DIR)/arch/{}/common/*.c}}
+C_SOURCES += $(ARCH_SRC)
+KERNEL_SRC = \
+$${{wildcard $(TOP_DIR)/kernel/core/*.c}} \
+$${{wildcard $(TOP_DIR)/kernel/pm/*.c}}
+C_SOURCES += $(KERNEL_SRC)
+CMSIS_SRC = \
+$${{wildcard $(TOP_DIR)/osal/cmsis_os/*.c}}
+C_SOURCES += $(CMSIS_SRC)
+
+ASM_SOURCES_S = \
+$(TOP_DIR)/arch/{}/{}/{}/port_s.S
+
+# ASM sources"#, 
+app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler(),
+app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
+app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler())).to_string();
+
+    // add include path
+    let pattern = Regex::new(format!("# compile gcc flags").as_str()).expect("Failed to create regex");
+    content = pattern.replace(&content, format!(r#"KERNEL_INC = \
+-I $(TOP_DIR)/kernel/core/include \
+-I $(TOP_DIR)/kernel/pm/include \
+-I $(TOP_DIR)/arch/{}/common/include \
+-I $(TOP_DIR)/arch/{}/{}/{} \
+-I $(TOP_DIR)/board/{}/TOS_CONFIG
+C_INCLUDES += $(KERNEL_INC)
+CMSIS_INC = \
+-I $(TOP_DIR)/osal/cmsis_os
+C_INCLUDES += $(CMSIS_INC)
+
+# compile gcc flags"#, 
+app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
+app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler(),
+project_name.clone())).to_string();
+
+    // add compile options
+    let pattern = Regex::new(format!("# list of ASM program objects").as_str()).expect("Failed to create regex");
+    content = pattern.replace(&content, format!(r#"# list of ASM_SOURCES_S program objects
+
+OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
+vpath %.S $(sort $(dir $(ASM_SOURCES_S)))
+
+$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
+	$(AS) -c $(CFLAGS) $< -o $@
+# list of ASM program objects
+"#)).to_string();
+
+    fs::write(makefile_path, content).expect("Failed to write file");
 
     Ok(())
 }
@@ -203,6 +263,7 @@ pub fn generate_iar_kernel(_app: &mut App, _tui: &mut Tui<CrosstermBackend<Stder
     Ok(())
 }
 
+// MDK and IAR for windows path
 pub fn generate_include_header_path(app: &mut App) -> String {
     info!("generate include path");
 
@@ -210,8 +271,8 @@ pub fn generate_include_header_path(app: &mut App) -> String {
 
     // ;..\..\..\arch\arm\arm-v7m\common\include;..\..\..\arch\arm\arm-v7m\cortex-m4\armcc;..\..\..\kernel\core\include;..\..\..\kernel\pm\include;..\..\..\osal\cmsis_os;..\TOS_CONFIG
     // 1. Add arch common path
-    include_path.push_str(format!(r#";..\..\..\arch\{}\common\include"#, app.cube_mx_project_config.arch.get_top_arch()).as_str());
-    include_path.push_str(format!(r#";..\..\..\arch\{}\{}\{}"#, app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()).as_str());
+    include_path.push_str(format!(r#";..\..\..\arch\{}\common\include"#, app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string())).as_str());
+    include_path.push_str(format!(r#";..\..\..\arch\{}\{}\{}"#, app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()).as_str());
     include_path.push_str(format!(r#";..\..\..\kernel\core\include"#).as_str());
     include_path.push_str(format!(r#";..\..\..\kernel\pm\include"#).as_str());
     include_path.push_str(format!(r#";..\..\..\osal\cmsis_os"#).as_str());
@@ -246,9 +307,9 @@ pub fn generate_include_files_path(app: &mut App) -> String {
     <FilePath>..\..\..\arch\{}\{}\{}\port_s.S</FilePath>
   </File>
 </Files>
-</Group>"#, app.cube_mx_project_config.arch.get_top_arch(),
-    app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler(),
-    app.cube_mx_project_config.arch.get_top_arch(), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()
+</Group>"#, app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
+    app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler(),
+    app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()), app.cube_mx_project_config.arch.as_str(), app.cube_mx_project_config.kind.get_compiler()
     ).as_str());
 
 include_path.push_str(format!(r#"<Group>
@@ -412,8 +473,10 @@ include_path.push_str(format!(r#"<Group>
 
 
 mod tests {
-    
+    use std::{path::Path, fs::{File, self}, io::BufReader};
 
+    use regex::Regex;
+    use xml::{EventReader, reader::XmlEvent};
     
     #[test]
     fn test_get_include_path() {
@@ -522,5 +585,13 @@ mod tests {
                 _ => {}
             }
         }
+    }
+
+    #[test]
+    fn test_regex() {
+      let mut content = fs::read_to_string("/Users/asklv/WebDownloads/tos/Tencentos_tiny_gcc_ori/Tencentos_tiny_gcc/Makefile").expect("Failed to read file");
+      let pattern = Regex::new(r#"# C sources(.*?)# ASM sources"#).expect("Failed to create regex");
+      
+      print!("{}", content);
     }
 }

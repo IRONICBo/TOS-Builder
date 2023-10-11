@@ -31,8 +31,9 @@ pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), Box<dyn Error>> 
 }
 
 mod tests {
-    
-    
+    use std::path::PathBuf;
+
+    use super::copy_dir_recursive;
 
     #[test]
     fn test_copy_dir_recursive() {

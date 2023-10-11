@@ -55,13 +55,11 @@ pub const TOS_CONFIG: &str = r#"#ifndef _TOS_CONFIG_H_
 "#;
 
 mod tests {
-    
+    use std::fs::File;
 
-    
+    use handlebars::Handlebars;
 
-    
-
-    
+    use crate::{templates::tos_config::TOS_CONFIG, app::App};
 
     #[test]
     fn print_tos_header() {
