@@ -1,10 +1,6 @@
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout},
-    style::{Color, Modifier, Style},
-    symbols::DOT,
-    text::{Line, Span},
-    widgets::{Block, BorderType, Borders, Padding, Paragraph, Tabs},
+    layout::{Constraint, Direction, Layout},
     Frame,
 };
 
@@ -13,7 +9,6 @@ use crate::{
     components::{footer, header, popup},
 };
 use crate::{
-    components::fs,
     pages::{at_config, make_config, project_select, tos_config, tos_download},
 };
 

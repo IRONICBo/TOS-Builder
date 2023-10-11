@@ -1,16 +1,10 @@
-use std::{
-    env::current_dir,
-    error::Error,
-    fs::{self, DirEntry},
-    path::Path,
-};
+
 
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Row, Table, Wrap},
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Modifier, Style},
+    widgets::{Block, Borders, Row, Table},
     Frame,
 };
 

@@ -15,10 +15,10 @@ pub struct ATConfigTable {
 
 impl ATConfigTable {
     pub fn default() -> Self {
-        let mut at_config = ATConfig::default();
+        let at_config = ATConfig::default();
         let mut table_state = TableState::default();
         table_state.select(Some(0));
-        let mut len = at_config.to_vec().len();
+        let len = at_config.to_vec().len();
 
         Self {
             at_config: ATConfig::default(),

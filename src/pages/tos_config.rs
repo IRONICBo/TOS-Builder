@@ -1,21 +1,15 @@
-use std::{
-    env::current_dir,
-    error::Error,
-    fs::{self, DirEntry},
-    path::Path,
-};
 
-use serde_json::Value;
+
+
 use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
-    text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Row, Table, Wrap, Cell},
+    widgets::{Block, BorderType, Borders, Row, Table, Cell},
     Frame,
 };
 
-use crate::{app::{App, ActiveModules}, components::fs::draw_cube_path_tree, components::kinds::draw_cube_kind_tree, config::common::StringValue};
+use crate::{app::{App, ActiveModules}};
 
 pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     // split window

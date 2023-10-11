@@ -2,7 +2,7 @@ use std::{
     env::current_dir,
     error::Error,
     fs::{self, DirEntry},
-    path::{Path, Component},
+    path::{Path},
 };
 
 use serde::{Deserialize, Serialize};
@@ -10,12 +10,11 @@ use tui::{
     backend::Backend,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
-    text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Wrap},
+    widgets::{Block, BorderType, Borders, List, ListItem, ListState},
     Frame,
 };
 
-use crate::{app::{ActiveModules, App}, utils::path};
+use crate::{app::{ActiveModules, App}};
 
 /// select project path
 #[derive(Debug, Default)]

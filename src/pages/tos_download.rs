@@ -1,20 +1,14 @@
-use std::{
-    env::current_dir,
-    error::Error,
-    fs::{self, DirEntry},
-    path::Path,
-};
+
 
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Row, Table, Wrap},
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Modifier, Style},
+    widgets::{Block, Borders, Row, Table},
     Frame,
 };
 
-use crate::{app::App, components::{fs::{draw_cube_path_tree, draw_tos_path_tree}, kinds::draw_tos_version_tree}, components::kinds::draw_cube_kind_tree};
+use crate::{app::App, components::{fs::{draw_tos_path_tree}, kinds::draw_tos_version_tree}};
 
 pub fn draw_page<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     // split window

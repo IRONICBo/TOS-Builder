@@ -61,7 +61,7 @@ pub fn update_element_value<'a>(
     reader: BufReader<File>,
     writer: BufWriter<File>,
     target_path: &[&str],
-    new_value: &str,
+    _new_value: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut target_index = 0;
     let mut include_path_value = String::new();
@@ -127,14 +127,14 @@ fn alternating_caps(text: &str) -> String {
 }
 
 mod tests {
-    use std::{fs::{File, read_to_string, self}, io::{BufReader, BufWriter}, path::Path};
+    
 
-    use regex::Regex;
-    use xml::{reader::XmlEvent, EventReader};
+    
+    
 
-    use crate::utils::xml_helper::update_element_value;
+    
 
-    use super::find_element_value;
+    
     #[test]
     fn test_get_include_path() {
         let mdk_filepath = Path::new("/Users/asklv/TOS_Test/generated/board/Tencentos-tiny/MDK-ARM/Tencentos-tiny.uvprojx");

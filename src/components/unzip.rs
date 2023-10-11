@@ -1,14 +1,11 @@
 use std::path::Path;
 
-use log::info;
+
 use serde::{Deserialize, Serialize};
 use tui::{
-    backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect, Alignment},
-    style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, Clear, Gauge, Paragraph, Widget},
-    Frame,
+    layout::{Alignment},
+    style::{Color, Style},
+    widgets::{Block, Borders, Gauge},
 };
 
 use crate::app::App;

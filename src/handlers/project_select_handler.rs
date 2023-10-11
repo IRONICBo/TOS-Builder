@@ -1,12 +1,12 @@
 use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::{Component, Path}, io::Stderr};
 
 use crossterm::event::KeyCode;
-use log::*;
+
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::{CubeMXProjectType, ArchType}, tui::Tui};
+use crate::{app::{ActiveModules, App, AppResult}, config::cubemx_config::{CubeMXProjectType, ArchType}, tui::Tui};
 
-pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
+pub fn handle_key_events(key_event: KeyCode, app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
         KeyCode::Char('a') | KeyCode::Char('A') => choose_previous_module(app),
         KeyCode::Char('d') | KeyCode::Char('D') => choose_next_module(app),
@@ -207,7 +207,7 @@ fn choose_selected_item(app: &mut App) {
             let flist = &mut app.fl;
             if let Some(selected) = flist.index.selected() {
                 if selected <= flist.dirs.len() {
-                    let dir = current_dir().unwrap();
+                    let _dir = current_dir().unwrap();
                     match selected {
                         // .. to parent dir
                         0 => {

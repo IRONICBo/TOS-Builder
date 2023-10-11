@@ -1,17 +1,13 @@
 use std::{
-    env::current_dir,
     error::Error,
-    fs::{self, DirEntry},
-    path::Path,
 };
 
 use serde::{Deserialize, Serialize};
 use tui::{
     backend::Backend,
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    layout::{Alignment, Rect},
     style::{Color, Modifier, Style},
-    text::Text,
-    widgets::{Block, BorderType, Borders, List, ListItem, ListState, Paragraph, Wrap},
+    widgets::{Block, BorderType, Borders, List, ListItem, ListState},
     Frame,
 };
 
@@ -31,7 +27,7 @@ impl KindList {
     pub fn default(kind_list: Vec<String>) -> Result<Self, Box<dyn Error>> {
         let mut list_state = ListState::default();
         list_state.select(Some(0));
-        let mut exp = Self {
+        let exp = Self {
             current: kind_list[0].to_string(),
             value: kind_list,
             index: list_state,

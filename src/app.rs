@@ -1,10 +1,10 @@
-use std::{env::current_dir, error, sync::Arc};
+use std::{error};
 
 use serde::{Serialize, Deserialize};
 
 use crate::{
     components::{fs::FolderList, kinds::KindList, input::Input, download::Download, unzip::Unzip, export::Export},
-    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType, ArchType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderConfig, TOSHeaderTable}, at_config::ATConfigTable},
+    config::{cubemx_config::{CubeMXProjectConfig, CubeMXProjectType, ArchType}, tos_config::{TOSProjectConfig, TOSProjectVersion, TOSHeaderTable}, at_config::ATConfigTable},
 };
 
 /// Application result type.

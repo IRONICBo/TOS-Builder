@@ -1,21 +1,21 @@
-use chrono::{DateTime, FixedOffset, Local, TimeZone, Utc};
+use chrono::{Local, TimeZone};
 use handlebars::Handlebars;
 use log::*;
 use std::fs;
-use std::io::{prelude::*, BufReader, Stderr};
-use std::path::{Path, PathBuf};
-use std::str::FromStr;
+use std::io::{BufReader, Stderr};
+use std::path::{Path};
+
 use std::{error::Error, fs::File};
 use tui::backend::CrosstermBackend;
-use xml::reader::XmlEvent;
-use xml::{EmitterConfig, EventReader};
+
+
 
 use crate::app::App;
 use crate::config::cubemx_config::CubeMXProjectType;
 use crate::templates;
 use crate::tui::Tui;
 use crate::utils::copy::copy_dir_recursive;
-use crate::utils::xml_helper::{find_element_value, update_element_value, temp_update_element_value};
+use crate::utils::xml_helper::{find_element_value, temp_update_element_value};
 
 pub fn export_project(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     app.export_popup = true;
@@ -54,14 +54,14 @@ pub fn export_project(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) ->
     Ok(())
 }
 
-pub fn do_prepare_project(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn do_prepare_project(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     app.export.message = format!("set arch & board & kernel & osal dirs");
     info!("exporting message: {}", app.export.message);
 
     // get tos project path
-    let mut generated = Path::new(app.cube_mx_project_config.generated.as_str());
-    let mut cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
-    let mut tos_dir = Path::new(app.tos_project_config.path.as_str());
+    let generated = Path::new(app.cube_mx_project_config.generated.as_str());
+    let cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
+    let tos_dir = Path::new(app.tos_project_config.path.as_str());
 
     // copy arch
     let _ = copy_dir_recursive(tos_dir.join("arch").as_path(), generated.join("arch").as_path());
@@ -106,19 +106,19 @@ pub fn do_prepare_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>)
     Ok(())
 }
 
-pub fn do_prepare_tos_header(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn do_prepare_tos_header(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     app.export.message = format!("set tos header");
     info!("exporting message: {}", app.export.message);
 
     // generate tos header path
-    let mut generated = Path::new(app.cube_mx_project_config.generated.as_str());
-    let mut cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
+    let generated = Path::new(app.cube_mx_project_config.generated.as_str());
+    let cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
     let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
     fs::create_dir_all(generated.join("board").join(project_name.clone()).join("TOS_CONFIG"))?;
 
     // generate tos header file & write to path
     let mut tos_header_file = File::create(generated.join("board").join(project_name.clone()).join("TOS_CONFIG").join("tos_config.h"))?;
-    let mut tos_header_template = templates::tos_config::TOS_CONFIG;
+    let tos_header_template = templates::tos_config::TOS_CONFIG;
 
     // render to template
     let mut reg = Handlebars::new();
@@ -128,7 +128,7 @@ pub fn do_prepare_tos_header(app: &mut App, tui: &mut Tui<CrosstermBackend<Stder
     Ok(())
 }
 
-pub fn do_prepeare_at(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn do_prepeare_at(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     app.export.message = format!("set at & devices");
     info!("exporting message: {}", app.export.message);
 
@@ -136,18 +136,26 @@ pub fn do_prepeare_at(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) ->
 }
 
 // Generate GCC kernel
-pub fn generate_gcc_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn generate_gcc_kernel(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     info!("generate gcc kernel");
+
+    let generated = Path::new(app.cube_mx_project_config.generated.as_str());
+    let cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
+    let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
+    let makefile_path = generated.join("board").join(project_name.clone()).join("Makefile");
+
+    let file = File::open(makefile_path.clone()).expect("Failed to open file");
+    let _reader = BufReader::new(file);
 
     Ok(())
 }
 
 // Generate MDK kernel
-pub fn generate_mdk_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn generate_mdk_kernel(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     info!("generate mdk kernel");
 
-    let mut generated = Path::new(app.cube_mx_project_config.generated.as_str());
-    let mut cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
+    let generated = Path::new(app.cube_mx_project_config.generated.as_str());
+    let cubemx_project = Path::new(app.cube_mx_project_config.path.as_str());
     let project_name = cubemx_project.file_name().unwrap().clone().to_string_lossy().to_string();
     let mdk_filepath = generated.join("board").join(project_name.clone()).join("MDK-ARM").join(format!("{}.uvprojx", project_name.clone()));
 
@@ -189,7 +197,7 @@ pub fn generate_mdk_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>
 }
 
 // Generate IAR kernel
-pub fn generate_iar_kernel(app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
+pub fn generate_iar_kernel(_app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> Result<(), Box<dyn Error>> {
     info!("generate iar kernel");
 
     Ok(())
@@ -404,9 +412,9 @@ include_path.push_str(format!(r#"<Group>
 
 
 mod tests {
-    use std::{fs::File, io::BufReader, path::Path};
+    
 
-    use xml::{reader::XmlEvent, EventReader};
+    
     #[test]
     fn test_get_include_path() {
         let mdk_filepath = Path::new("/Users/asklv/TOS_Test/generated/board/Tencentos-tiny/MDK-ARM/Tencentos-tiny.uvprojx");

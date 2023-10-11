@@ -1,10 +1,10 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, thread, io::Stderr};
+use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, io::Stderr};
 
 use crossterm::event::KeyCode;
 use log::*;
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::{path, downloader::{self, download_tos}, extract_zip::extract_zip}, config::{cubemx_config::CubeMXProjectType, tos_config::TOSProjectVersion}, components::download, tui::Tui};
+use crate::{app::{ActiveModules, App, AppResult}, utils::{downloader::{download_tos}, extract_zip::extract_zip}, config::{tos_config::TOSProjectVersion}, tui::Tui};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
@@ -160,7 +160,7 @@ fn choose_selected_item(app: &mut App) {
             let flist = &mut app.fl;
             if let Some(selected) = flist.index.selected() {
                 if selected <= flist.dirs.len() {
-                    let dir = current_dir().unwrap();
+                    let _dir = current_dir().unwrap();
                     match selected {
                         // .. to parent dir
                         0 => {

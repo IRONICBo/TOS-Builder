@@ -3,7 +3,7 @@ use std::env::current_dir;
 use log::debug;
 use serde::{Serialize, Deserialize};
 use serde_json::value::{self, Map, Value as Json};
-use tui::widgets::{ListState, TableState};
+use tui::widgets::{TableState};
 
 use super::common::{StringValue, BoolValue};
 
@@ -63,10 +63,10 @@ pub struct TOSHeaderTable {
 
 impl TOSHeaderTable {
     pub fn default() -> Self {
-        let mut tos_header_config = TOSHeaderConfig::default();
+        let tos_header_config = TOSHeaderConfig::default();
         let mut table_state = TableState::default();
         table_state.select(Some(0));
-        let mut len = tos_header_config.to_vec().len();
+        let len = tos_header_config.to_vec().len();
 
         Self {
             tos_header_config: TOSHeaderConfig::default(),

@@ -4,7 +4,7 @@ use tui::{
     style::{Color, Modifier, Style},
     symbols::DOT,
     text::{Line, Span},
-    widgets::{Block, Borders, Padding, Paragraph, Tabs},
+    widgets::{Block, Borders, Tabs},
     Frame,
 };
 

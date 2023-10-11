@@ -1,4 +1,4 @@
-use core::fmt;
+
 use std::{path::Path, error::Error, fs};
 
 pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), Box<dyn Error>> {
@@ -12,7 +12,7 @@ pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), Box<dyn Error>> 
         return Err("dst is not a directory".into());
     }
 
-    let name = src.file_name().unwrap().to_string_lossy();
+    let _name = src.file_name().unwrap().to_string_lossy();
 
     for entry in src.read_dir()? {
         let entry = entry?;
@@ -31,8 +31,8 @@ pub fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<(), Box<dyn Error>> 
 }
 
 mod tests {
-    use super::*;
-    use std::path::PathBuf;
+    
+    
 
     #[test]
     fn test_copy_dir_recursive() {

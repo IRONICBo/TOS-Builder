@@ -1,6 +1,6 @@
 use std::{
     env::current_dir,
-    path::{self, Path},
+    path::{Path},
 };
 
 use serde::{Deserialize, Serialize};

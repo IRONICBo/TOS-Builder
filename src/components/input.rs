@@ -1,11 +1,7 @@
 use serde::{Deserialize, Serialize};
 use tui::{
-    backend::Backend,
-    layout::{Rect, Layout, Direction, Constraint},
-    style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Paragraph, Borders, Block, Clear, Widget},
-    Frame,
+    style::{Color, Style},
+    widgets::{Paragraph, Borders, Block},
 };
 
 use crate::app::App;

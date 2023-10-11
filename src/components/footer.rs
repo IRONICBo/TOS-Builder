@@ -9,7 +9,7 @@ use tui::{
 
 use crate::app::App;
 
-pub fn draw_footer<B: Backend>(app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
+pub fn draw_footer<B: Backend>(_app: &mut App, frame: &mut Frame<'_, B>, area: Rect) {
     let key_color = Color::Yellow;
     let spans = Line::from(vec![
         Span::styled("<TAB>", Style::default().fg(key_color).add_modifier(Modifier::BOLD)),

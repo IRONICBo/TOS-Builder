@@ -1,9 +1,9 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component};
+use std::{cmp::{max, min}, env::{current_dir}};
 
 use crossterm::event::KeyCode;
-use log::*;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::{cubemx_config::CubeMXProjectType, at_config}, components::input::InputMode};
+
+use crate::{app::{ActiveModules, App, AppResult}, config::{cubemx_config::CubeMXProjectType}, components::input::InputMode};
 
 pub fn handle_key_events(key_event: KeyCode, app: &mut App) -> AppResult<()> {
     match key_event {
@@ -148,7 +148,7 @@ fn choose_selected_item(app: &mut App) {
             let flist = &mut app.fl;
             if let Some(selected) = flist.index.selected() {
                 if selected <= flist.dirs.len() {
-                    let dir = current_dir().unwrap();
+                    let _dir = current_dir().unwrap();
                     match selected {
                         // .. to parent dir
                         0 => {

@@ -1,4 +1,4 @@
-use simplelog::{Config, ConfigBuilder, LevelFilter, WriteLogger};
+use simplelog::{ConfigBuilder, LevelFilter, WriteLogger};
 use std::fs::File;
 
 pub fn init_logger() {

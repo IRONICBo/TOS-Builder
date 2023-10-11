@@ -1,12 +1,12 @@
-use std::{cmp::{max, min}, env::{current_dir, set_current_dir}, path::Component, io::Stderr};
+use std::{io::Stderr};
 
 use crossterm::event::KeyCode;
-use log::*;
+
 use tui::backend::CrosstermBackend;
 
-use crate::{app::{ActiveModules, App, AppResult}, utils::path, config::cubemx_config::CubeMXProjectType, tui::Tui, components::input::InputMode};
+use crate::{app::{ActiveModules, App, AppResult}, tui::Tui, components::input::InputMode};
 
-pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
+pub fn handle_key_events(key_event: KeyCode, app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>>) -> AppResult<()> {
     match key_event {
         KeyCode::Char('a') | KeyCode::Char('A') => choose_previous_module(app),
         KeyCode::Char('d') | KeyCode::Char('D') => choose_next_module(app),
@@ -19,11 +19,11 @@ pub fn handle_key_events(key_event: KeyCode, app: &mut App, tui: &mut Tui<Crosst
     Ok(())
 }
 
-fn choose_next_module(app: &mut App) {
+fn choose_next_module(_app: &mut App) {
     // Change to next
 }
 
-fn choose_previous_module(app: &mut App) {
+fn choose_previous_module(_app: &mut App) {
     // Change to previous
 }
 
@@ -74,7 +74,7 @@ fn choose_enter_item(app: &mut App) {
     let binding = app.at_config_table.at_config.to_vec();
     let idx = app.at_config_table.index.selected().expect("at config table index is none");
 
-    let key = &binding[idx][0];
+    let _key = &binding[idx][0];
     let value = &binding[idx][1];
 
     app.input.input = value.to_string();
