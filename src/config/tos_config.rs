@@ -1,11 +1,12 @@
 use std::env::current_dir;
 
 use log::debug;
+use regex::Regex;
 use serde::{Serialize, Deserialize};
 use serde_json::value::{self, Map, Value as Json};
 use tui::widgets::{TableState};
 
-use super::common::{StringValue, BoolValue};
+use super::{common::{StringValue, BoolValue}, cubemx_config::CubeMXProjectType};
 
 #[derive(Debug)]
 #[derive(Serialize, Deserialize)]
@@ -276,5 +277,100 @@ impl TOSHeaderConfig {
                 debug!("TOSHeaderConfig update key {} not found", key);
             }
         }
+    }
+
+    // For at firmware
+    pub fn get_at_hal_path(&self, compiler: String) -> &'static str {
+        // get tos_cfg_header_include
+        let tos_cfg_header_include = self.tos_cfg_header_include.value.clone();
+        // remove suffix
+        let re = Regex::new(r"\.h$").unwrap();
+        let tos_cfg_header_include = re.replace_all(&tos_cfg_header_include, "").to_string();
+
+        match CubeMXProjectType::convert_to_type(compiler) {
+            CubeMXProjectType::GCC => match tos_cfg_header_include.as_str() {
+                "gd32vf1xx" => {
+                    r"platform/hal/gd/gd32vf1xx/src"
+                }
+                "mimxrt10xx" => {
+                    r"platform/hal/nxp/mimxrt10xx/src"
+                }
+                "stm32f1xx" => {
+                    r"platform/hal/st/stm32f1xx/src"
+                }
+                "stm32f4xx" => {
+                    r"platform/hal/st/stm32f4xx/src"
+                }
+                "stm32f7xx" => {
+                    r"platform/hal/st/stm32f7xx/src"
+                }
+                "stm32g0xx" => {
+                    r"platform/hal/st/stm32g0xx/src"
+                }
+                "stm32h7xx" => {
+                    r"platform/hal/st/stm32h7xx/src"
+                }
+                "stm32l0xx" => {
+                    r"platform/hal/st/stm32l0xx/src"
+                }
+                "stm32l4xx" => {
+                    r"platform/hal/st/stm32l4xx/src"
+                }
+                "stm32l5xx" => {
+                    r"platform/hal/st/stm32l5xx/src"
+                }
+                "stm32wl" => {
+                    r"platform/hal/st/stm32wl/src"
+                }
+                "ch32v30xx" => {
+                    r"platform/hal/wch/ch32v30xx/src"
+                }
+                _ => {
+                    r"platform/hal/st/stm32wl/src"
+                }
+            }
+            _ => match tos_cfg_header_include.as_str() {
+                "gd32vf1xx" => {
+                    r"platform\hal\gd\gd32vf1xx\src"
+                }
+                "mimxrt10xx" => {
+                    r"platform\hal\nxp\mimxrt10xx\src"
+                }
+                "stm32f1xx" => {
+                    r"platform\hal\st\stm32f1xx\src"
+                }
+                "stm32f4xx" => {
+                    r"platform\hal\st\stm32f4xx\src"
+                }
+                "stm32f7xx" => {
+                    r"platform\hal\st\stm32f7xx\src"
+                }
+                "stm32g0xx" => {
+                    r"platform\hal\st\stm32g0xx\src"
+                }
+                "stm32h7xx" => {
+                    r"platform\hal\st\stm32h7xx\src"
+                }
+                "stm32l0xx" => {
+                    r"platform\hal\st\stm32l0xx\src"
+                }
+                "stm32l4xx" => {
+                    r"platform\hal\st\stm32l4xx\src"
+                }
+                "stm32l5xx" => {
+                    r"platform\hal\st\stm32l5xx\src"
+                }
+                "stm32wl" => {
+                    r"platform\hal\st\stm32wl\src"
+                }
+                "ch32v30xx" => {
+                    r"platform\hal\wch\ch32v30xx\src"
+                }
+                _ => {
+                    r"platform\hal\st\stm32wl\src"
+                }
+            }
+        }
+
     }
 }

@@ -1,11 +1,10 @@
-use log::{info, debug};
+use log::{debug, info};
 use serde::{Deserialize, Serialize};
 use tui::widgets::TableState;
 
-use super::common::BoolValue;
+use super::{common::BoolValue, cubemx_config::CubeMXProjectType};
 
-#[derive(Debug)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ATConfigTable {
     pub at_config: ATConfig,
     #[serde(skip)]
@@ -28,8 +27,7 @@ impl ATConfigTable {
     }
 }
 
-#[derive(Debug)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ATConfig {
     pub enable_air724: BoolValue,
     pub enable_bc26: BoolValue,
@@ -58,10 +56,10 @@ impl ATConfig {
             enable_m5310a: BoolValue::new(String::from("ENABLE_M5310A"), false, String::from("Enable M5310A to use AT command")),
             enable_m6312: BoolValue::new(String::from("ENABLE_M6312"), false, String::from("Enable M6312 to use AT command")),
             enable_sim800a: BoolValue::new(String::from("ENABLE_SIM800a"), false, String::from("Enable SIM800A to use AT command")),
-            enable_sim7600ce: BoolValue::new(String::from("ENABLE_SIM7600CE"), false, String::from("Enable SIM7600CE to use AT command")), 
+            enable_sim7600ce: BoolValue::new(String::from("ENABLE_SIM7600CE"), false, String::from("Enable SIM7600CE to use AT command")),
         }
     }
-    
+
     pub fn to_vec(&self) -> Vec<Vec<String>> {
         vec![
             self.enable_air724.to_vec(),
@@ -120,4 +118,60 @@ impl ATConfig {
             }
         }
     }
+
+    pub fn is_enable(&self) -> bool {
+        // check ATConfig has at least one device is enable
+        self.enable_air724.value
+            || self.enable_bc26.value
+            || self.enable_bc25_28_95.value
+            || self.enable_bc35_28_95_lwm2m.value
+            || self.enable_ec20.value
+            || self.enable_esp8266.value
+            || self.enable_m26.value
+            || self.enable_m5310a.value
+            || self.enable_m6312.value
+            || self.enable_sim800a.value
+            || self.enable_sim7600ce.value
+    }
+
+    pub fn get_sal_module_path(&self, compiler: String) -> &'static str {
+        match CubeMXProjectType::convert_to_type(compiler) {
+            CubeMXProjectType::GCC => r"net/sal_module_wrapper",
+            _ => r"net\sal_module_wrapper",
+        }
+    }
+
+    pub fn get_first_enabled_device_source_path(&self, compiler: String) -> &'static str {
+        match CubeMXProjectType::convert_to_type(compiler) {
+            CubeMXProjectType::GCC => {
+                if self.enable_air724.value {
+                    return r"devices/air724"
+                } else if self.enable_bc26.value {
+                    return r"devices/air724"
+                } else if self.enable_ec20.value {
+                    return r"devices/ec20_200_600"
+                } else if self.enable_esp8266.value {
+                    return r"devices/esp8266"
+                } else {
+                    // Other does not support
+                    return r""
+                }
+            },
+            _ => {
+                if self.enable_air724.value {
+                    return r"devices\air724"
+                } else if self.enable_bc26.value {
+                    return r"devices\air724"
+                } else if self.enable_ec20.value {
+                    return r"devices\ec20_200_600"
+                } else if self.enable_esp8266.value {
+                    return r"devices\esp8266"
+                } else {
+                    // Other does not support
+                    return r""
+                }
+            },
+        }
+    }
+    
 }

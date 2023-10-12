@@ -83,6 +83,18 @@ pub fn do_prepare_project(app: &mut App, _tui: &mut Tui<CrosstermBackend<Stderr>
     let _ = copy_dir_recursive(tos_dir.join("osal").as_path(), generated.join("osal").as_path());
     info!("copy osal ok...");
 
+    // copy at & devices
+    if app.at_config_table.at_config.is_enable() {
+        info!("AT frame open");
+        // copy sal
+        let _ = copy_dir_recursive(tos_dir.join("net").as_path(), generated.join("net").as_path());
+        info!("copy at ok...");
+        let _ = copy_dir_recursive(tos_dir.join("platform").as_path(), generated.join("platform").as_path());
+        info!("copy platform ok...");
+    } else {
+        info!("AT frame is closed");
+    }
+    
     Ok(())
 }
 
@@ -173,6 +185,7 @@ KERNEL_SRC = \
 $${{wildcard $(TOP_DIR)/kernel/core/*.c}} \
 $${{wildcard $(TOP_DIR)/kernel/pm/*.c}}
 C_SOURCES += $(KERNEL_SRC)
+{}
 CMSIS_SRC = \
 $${{wildcard $(TOP_DIR)/osal/cmsis_os/*.c}}
 C_SOURCES += $(CMSIS_SRC)
@@ -185,6 +198,7 @@ $(TOP_DIR)/arch/{}/{}/{}/port_s.S
                 app.cube_mx_project_config.arch.as_str(),
                 app.cube_mx_project_config.kind.get_compiler(),
                 app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
+                generate_gcc_at_sources_path(app),
                 app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
                 app.cube_mx_project_config.arch.as_str(),
                 app.cube_mx_project_config.kind.get_compiler()
@@ -205,6 +219,7 @@ $(TOP_DIR)/arch/{}/{}/{}/port_s.S
 -I $(TOP_DIR)/arch/{}/{}/{} \
 -I $(TOP_DIR)/board/{}/TOS_CONFIG
 C_INCLUDES += $(KERNEL_INC)
+{}
 CMSIS_INC = \
 -I $(TOP_DIR)/osal/cmsis_os
 C_INCLUDES += $(CMSIS_INC)
@@ -214,7 +229,8 @@ C_INCLUDES += $(CMSIS_INC)
                 app.cube_mx_project_config.arch.get_top_arch(app.cube_mx_project_config.kind.as_str().to_string()),
                 app.cube_mx_project_config.arch.as_str(),
                 app.cube_mx_project_config.kind.get_compiler(),
-                project_name.clone()
+                project_name.clone(),
+                generate_gcc_at_include_path(app),
             ),
         )
         .to_string();
@@ -241,6 +257,65 @@ $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
     fs::write(makefile_path, content).expect("Failed to write file");
 
     Ok(())
+}
+
+pub fn generate_gcc_at_sources_path(app: &mut App) -> String {
+    info!("generate at sources path");
+
+    let mut at_sources_path = String::new();
+
+    // 1. Add arch common path
+    at_sources_path.push_str(
+        format!(
+            r#"AT_SRC = \
+$${{wildcard $(TOP_DIR)/net/at/src/*.c}}
+$${{wildcard $(TOP_DIR)/{}/*.c}}
+C_SOURCES += $(AT_SRC)
+SAL_SRC = \
+$${{wildcard $(TOP_DIR)/net/sal_module_wrapper/*.c}}
+C_SOURCES += $(SAL_SRC)
+DEVICE_SRC = \
+$${{wildcard $(TOP_DIR)/{}/*.c}} \
+C_SOURCES += $(DEVICE_SRC)
+"#,
+            app.tos_header_table.tos_header_config.get_at_hal_path(app.cube_mx_project_config.kind.as_str().to_string()),
+            app.at_config_table.at_config.get_first_enabled_device_source_path(app.cube_mx_project_config.kind.as_str().to_string()),
+        )
+        .as_str(),
+    );
+
+    info!("at sources path: {}", at_sources_path);
+
+    return at_sources_path;
+}
+
+pub fn generate_gcc_at_include_path(app: &mut App) -> String {
+  info!("generate at sources path");
+
+  let mut at_sources_path = String::new();
+
+  // 1. Add arch common path
+  at_sources_path.push_str(
+      format!(
+          r#"AT_INC = \
+-I $(TOP_DIR)/net/at/include \
+-I $(TOP_DIR)/kernel/hal/include
+C_INCLUDES += $(AT_INC)
+SAL_INC = \
+-I $(TOP_DIR)/net/sal_module_wrapper
+C_INCLUDES += $(SAL_INC)
+DEVICE_INC = \
+-I $(TOP_DIR)/{}
+C_INCLUDES += $(DEVICE_INC)
+"#,
+          app.at_config_table.at_config.get_first_enabled_device_source_path(app.cube_mx_project_config.kind.as_str().to_string()),
+      )
+      .as_str(),
+  );
+
+  info!("at sources path: {}", at_sources_path);
+
+  return at_sources_path;
 }
 
 // Generate MDK kernel
