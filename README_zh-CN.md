@@ -5,10 +5,15 @@
 <p align="center">
     <a href="./README.md"><b>English</b></a> •
     <a href="./README_zh-CN.md"><b>中文</b></a> •
-    <a href="./PROPOSAL.md"><b>Proposal</b></a>
+    <a href="./PROPOSAL.md"><b>提案</b></a> •
+    <a href="./Log.md"><b>开发日志</b></a> 
 </p>
 
 一个简单的终端构建工具，用于快速构建[TencentOS-tiny](https://github.com/OpenAtomFoundation/TencentOS-tiny)及其应用示例。
+
+<p align="center">
+    <img width="500px" src="https://github.com/IRONICBo/TOS-Builder/assets/47499836/fecb292a-bd81-4705-bcf3-fd9dceb7a4ae" />
+</p>
 
 ## 🧩 优秀特性
 
