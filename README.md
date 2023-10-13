@@ -140,6 +140,10 @@ To locate a problem, you can use a text editor or terminal tool to open the "tos
 
 The TOS build system uses configuration files to store configuration information about a project. These configuration files are usually stored in the root directory of the project under `config.json` for use during the build process. You can use a text editor or terminal tool to open these configuration files and view their contents.
 
+## 📚 Docs
+
+- Develop Logs: [Develop Log](./Log.md)
+
 ## 📦 Build
 
 #####  Pre-requisites
