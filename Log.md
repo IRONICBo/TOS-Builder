@@ -25,6 +25,6 @@ The development log records about TOS-Builder are provided here, you can view th
 - [TOS-Builder下载官方Release包和日志支持](./docs/logs/TOS-Builder_download_official_Release_package.md)
 - [TOS-Builder异步下载TOS资源问题](./docs/logs/TOS-Builder_asynchronous_download_TOS_resource_problem.md)
 - [TOS-Builder杂项](./docs/logs/TOS-Builder_miscellaneous.md)
-- [TOS-Builder文件解压和配置修改方法](./docs/logs/TOS-Builder_file_decompression_and_configuration_modification_logic.md)
+- [TOS-Builder文件解压和配置修改方法](./docs/logs/TOS-Builder_file_decompression_and_configuration_modification_method.md)
 - [工程配置](./docs/logs/Project_configuration.md)
 - [TOS-Builder构建补充](./docs/logs/TOS-Builder_build_supplement.md)
