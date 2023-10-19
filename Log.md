@@ -21,7 +21,7 @@ The development log records about TOS-Builder are provided here, you can view th
 - [Cargo启动项目失败](./docs/logs/Cargo_failed_to_start_the_project.md)
 - [TOS-Builder部分组件开发](./docs/logs/TOS-Builder_partial_component_development.md)
 - [TOS-Builder添加序列化配置](./docs/logs/TOS-Builder_add_serialization_configuration.md)
-- [TOS-Builder渲染表哥配置](./docs/logs/TOS-Builder_render_table_configuration.md)
+- [TOS-Builder渲染表格配置](./docs/logs/TOS-Builder_render_table_configuration_and_log.md)
 - [TOS-Builder下载官方Release包和日志支持](./docs/logs/TOS-Builder_download_official_Release_package.md)
 - [TOS-Builder异步下载TOS资源问题](./docs/logs/TOS-Builder_asynchronous_download_TOS_resource_problem.md)
 - [TOS-Builder杂项](./docs/logs/TOS-Builder_miscellaneous.md)

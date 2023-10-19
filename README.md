@@ -142,7 +142,7 @@ The TOS build system uses configuration files to store configuration information
 
 ## 📚 Docs
 
-- Develop Logs: [Develop Log](./Log.md)
+- Find **develop logs** here: [Develop Log](./Log.md)
 
 ## 📦 Build
 
